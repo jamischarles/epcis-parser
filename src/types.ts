@@ -117,35 +117,35 @@ export interface EPCISParser {
   /**
    * Get the list of events from the EPCIS document
    */
-  getEventList(): EPCISEvent[];
+  getEventList(): Promise<EPCISEvent[]>;
   
   /**
    * Get the master data from the EPCIS document
    */
-  getMasterData(): Record<string, MasterData>;
+  getMasterData(): Promise<Record<string, MasterData>>;
   
   /**
    * Get the EPCIS header from the document
    */
-  getEPCISHeader(): EPCISHeader;
+  getEPCISHeader(): Promise<EPCISHeader>;
   
   /**
    * Get the sender information from the document
    */
-  getSender(): Sender;
+  getSender(): Promise<Sender>;
   
   /**
    * Get the receiver information from the document
    */
-  getReceiver(): Receiver;
+  getReceiver(): Promise<Receiver>;
   
   /**
    * Validate the document against the EPCIS schema
    */
-  isValid(): ValidationResult;
+  isValid(): Promise<ValidationResult>;
   
   /**
    * Get the full parsed document
    */
-  getDocument(): EPCISDocument;
+  getDocument(): Promise<EPCISDocument>;
 }

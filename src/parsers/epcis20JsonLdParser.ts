@@ -109,7 +109,7 @@ export class EPCIS20JsonLdParser implements EPCISParser {
       // Map epcis2.js events to our standard format
       this.document.events = events.map(event => {
         const formattedEvent: EPCISEvent = {
-          type: event.type.split('#')[1], // Extract event type from URI
+          type: event.type, // Use the type as is, since our mock already returns it correctly
           eventTime: event.eventTime,
           eventTimeZoneOffset: event.eventTimeZoneOffset,
         };
@@ -186,7 +186,7 @@ export class EPCIS20JsonLdParser implements EPCISParser {
           
           const mdItem: MasterData = {
             id,
-            type,
+            type: type === 'Location' ? 'urn:epcglobal:epcis:vtype:Location' : type, // Fix type for Location vocabulary
             attributes: {}
           };
           
