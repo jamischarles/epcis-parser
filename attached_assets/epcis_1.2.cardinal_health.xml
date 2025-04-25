@@ -1,0 +1,188 @@
+<epcis:EPCISDocument xmlns:cbvmda="urn:epcglobal:cbv:mda" xmlns:epcis="urn:epcglobal:epcis:xsd:1"
+  xmlns:sbdh="http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader" xmlns:gs1ushc="http://epcis.gs1us.org/hc/ns"
+  schemaVersion="1.2" creationDate="2012-03-25T17:10:16Z">
+<!--
+  EPCISHeader is optional however if EPCISHeader is present then it should have all the elements of
+  StandardBusinessDocumentHeader
+-->
+<EPCISHeader>
+  <sbdh:StandardBusinessDocumentHeader>
+    <sbdh:HeaderVersion>1.0</sbdh:HeaderVersion>
+    <sbdh:Sender>
+      <sbdh:Identifier Authority="SGLN">urn:epc:id:sgln:030001.111124.0</sbdh:Identifier>
+    </sbdh:Sender>
+    <sbdh:Receiver>
+      <sbdh:Identifier Authority="SGLN">urn:epc:id:sgln:039999.999929.0</sbdh:Identifier>
+    </sbdh:Receiver>
+    <sbdh:DocumentIdentification>
+      <sbdh:Standard>EPCglobal</sbdh:Standard>
+      <sbdh:TypeVersion>1.0</sbdh:TypeVersion>
+      <sbdh:InstanceIdentifier>urn:uuid:8bcd79de-c9fc-49a9-ab69-52890a8a0f04</sbdh:InstanceIdentifier>
+      <sbdh:Type>Events</sbdh:Type>
+      <sbdh:CreationDateAndTime>2018-01-15T08:36:05.732000-08:00</sbdh:CreationDateAndTime>
+    </sbdh:DocumentIdentification>
+  </sbdh:StandardBusinessDocumentHeader>
+  <!--
+    EPCISMasterData extension is optional in the Healthcare specification however Cardinal Health requires it. EPCISMasterData tag present then ALL fields related to master data below are required.
+    If
+  -->
+  <extension>
+    <EPCISMasterData>
+      <VocabularyList>
+        <Vocabulary type="urn:epcglobal:epcis:vtype:EPCClass">
+          <VocabularyElementList>
+            <VocabularyElement id="urn:epc:idpat:sgtin:0355154.094495.*">
+              <attribute id="urn:epcglobal:cbv:mda#additionalTradeItemIdentification">05515494495</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#additionalTradeItemIdentificationTypeCode">FDA_NDC_11</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#regulatedProductName">EpcistraiTEM</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#manufacturerOfTradeItemPartyName">GS1 Pharma LLC</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#dosageFormType">PILL</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#strengthDescription">100mg</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#netContentDescription">500 pills</attribute>
+            </VocabularyElement>
+            <VocabularyElement id="urn:epc:idpat:sgtin:0355154.394495.*">
+              <attribute id="urn:epcglobal:cbv:mda#additionalTradeItemIdentification">05515494495</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#additionalTradeItemIdentificationTypeCode">FDA_NDC_11</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#regulatedProductName">EpcistraCASE</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#manufacturerOfTradeItemPartyName">GS1 Pharma LLC</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#dosageFormType">PILL</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#strengthDescription">100mg</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#netContentDescription">500 pills</attribute>
+            </VocabularyElement>
+          </VocabularyElementList>
+        </Vocabulary>
+        <Vocabulary type="urn:epcglobal:epcis:vtype:Location">
+          <VocabularyElementList>
+            <VocabularyElement id="urn:epc:id:sgln:030001.111124.0">
+              <attribute id="urn:epcglobal:cbv:mda#name">GS1 Pharma LLC</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#streetAddressOne">1295 S George Ave</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#streetAddressTwo">Room 378</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#city">Washington</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#state">DC</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#postalCode">12345-6789</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#countryCode">US</attribute>
+            </VocabularyElement>
+            <VocabularyElement id="urn:epc:id:sgln:030001.111125.0">
+              <attribute id="urn:epcglobal:cbv:mda#name">GS1 Pharma LLC</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#streetAddressOne">1299 S George Ave</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#streetAddressTwo">Room 378</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#city">Washington</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#state">DC</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#postalCode">12345-6789</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#countryCode">US</attribute>
+            </VocabularyElement>
+            <VocabularyElement id="urn:epc:id:sgln:039999.999929.0">
+              <attribute id="urn:epcglobal:cbv:mda#name">GS1 Drug Distro LLC</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#streetAddressOne">230 Park Ave S</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#streetAddressTwo">Room 378</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#city">New York</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#state">NY</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#postalCode">10003-1502</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#countryCode">US</attribute>
+            </VocabularyElement>
+            <VocabularyElement id="urn:epc:id:sgln:039999.999928.0">
+              <attribute id="urn:epcglobal:cbv:mda#name">GS1 Drug Distro LLC</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#streetAddressOne">231 Park Ave S</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#streetAddressTwo">Room 378</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#city">New York</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#state">NY</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#postalCode">10003-1502</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#countryCode">US</attribute>
+            </VocabularyElement>
+          </VocabularyElementList>
+        </Vocabulary>
+      </VocabularyList>
+    </EPCISMasterData>
+  </extension>
+  <gs1ushc:dscsaTransactionStatement>
+    <gs1ushc:affirmTransactionStatement>true</gs1ushc:affirmTransactionStatement>
+    <gs1ushc:legalNotice>
+      Seller has complied with each applicable subsection of FDCA Sec. 581(27)(A)-(G).
+    </gs1ushc:legalNotice>
+  </gs1ushc:dscsaTransactionStatement>
+</EPCISHeader>
+<EPCISBody>
+  <EventList>
+    <ObjectEvent>
+      <eventTime>2012-03-25T17:10:16Z</eventTime>
+      <eventTimeZoneOffset>-05:00</eventTimeZoneOffset>
+      <epcList>
+        <epc>urn:epc:id:sgtin:0355154.094495.40095247428196</epc>
+        <epc>urn:epc:id:sgtin:0355154.094495.40023811077021</epc>
+        <epc>urn:epc:id:sgtin:0355154.094495.40075808151866</epc>
+        <epc>urn:epc:id:sgtin:0355154.094495.40047623652721</epc>
+        <epc>urn:epc:id:sgtin:0355154.394495.40072894693743</epc>
+      </epcList>
+      <action>ADD</action>
+      <bizStep>urn:epcglobal:cbv:bizstep:commissioning</bizStep>
+      <disposition>urn:epcglobal:cbv:disp:active</disposition>
+      <!-- readPoint is optional -->
+      <readPoint>
+        <id>urn:epc:id:sgln:030001.111124.0</id>
+      </readPoint>
+      <bizLocation>
+        <id>urn:epc:id:sgln:030001.111124.0</id>
+      </bizLocation>
+      <extension>
+        <ilmd>
+          <cbvmda:lotNumber>PR456</cbvmda:lotNumber>
+          <cbvmda:itemExpirationDate>2015-03-15</cbvmda:itemExpirationDate>
+        </ilmd>
+      </extension>
+    </ObjectEvent>
+    <AggregationEvent>
+      <eventTime>2012-03-25T17:10:17Z</eventTime>
+      <eventTimeZoneOffset>-05:00</eventTimeZoneOffset>
+      <parentID>urn:epc:id:sgtin:0355154.394495.40072894693743</parentID>
+      <childEPCs>
+        <epc>urn:epc:id:sgtin:0355154.094495.40095247428196</epc>
+        <epc>urn:epc:id:sgtin:0355154.094495.40023811077021</epc>
+        <epc>urn:epc:id:sgtin:0355154.094495.40075808151866</epc>
+        <epc>urn:epc:id:sgtin:0355154.094495.40047623652721</epc>
+      </childEPCs>
+      <action>ADD</action>
+      <bizStep>urn:epcglobal:cbv:bizstep:packing</bizStep>
+      <disposition>urn:epcglobal:cbv:disp:in_progress</disposition>
+      <!-- readPoint is optional -->
+      <readPoint>
+        <id>urn:epc:id:sgln:030001.111124.0</id>
+      </readPoint>
+      <bizLocation>
+        <id>urn:epc:id:sgln:030001.111124.0</id>
+      </bizLocation>
+    </AggregationEvent>
+    <ObjectEvent>
+      <eventTime>2012-03-27T17:10:18Z</eventTime>
+      <eventTimeZoneOffset>-05:00</eventTimeZoneOffset>
+      <!--
+        This should be the serial numbers of outermost package of shipment
+      -->
+      <epcList>
+        <epc>urn:epc:id:sgtin:0355154.394495.40072894693743</epc>
+      </epcList>
+      <action>OBSERVE</action>
+      <bizStep>urn:epcglobal:cbv:bizstep:shipping</bizStep>
+      <disposition>urn:epcglobal:cbv:disp:in_transit</disposition>
+      <!-- readPoint is optional -->
+      <readPoint>
+        <id>urn:epc:id:sgln:030001.111124.0</id>
+      </readPoint>
+        <!-- bizTransactionList is optional as per the Healthcare specification however Cardinal Health
+        requires the Purchase Order. All other types are optional.
+      -->
+      <bizTransactionList>
+        <bizTransaction type="urn:epcglobal:cbv:btt:inv">urn:epcglobal:cbv:bt:0300011111116:A123</bizTransaction>
+        <bizTransaction type="urn:epcglobal:cbv:btt:po">urn:epcglobal:cbv:bt:0399999999991:XYZ567</bizTransaction>
+        </bizTransactionList> <extension>
+        <sourceList>
+          <source type="urn:epcglobal:cbv:sdt:owning_party">urn:epc:id:sgln:030001.111124.0</source>
+          <!--
+            The sourceList location is optional. Use this only when the ship-from GLN or SGLN
+            location is different than the party transferring ownership.
+          -->
+        </sourceList>
+      </extension>
+    </ObjectEvent>
+  </EventList>
+</EPCISBody>
+</epcis:EPCISDocument>

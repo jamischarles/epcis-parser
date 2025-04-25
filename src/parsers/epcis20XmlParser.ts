@@ -257,7 +257,7 @@ export class EPCIS20XmlParser implements EPCISParser {
           const mdItem: MasterData = {
             id,
             type,
-            attributes: {}
+            attributes: {} // Initialize empty attributes object
           };
           
           // Extract attributes
@@ -269,6 +269,10 @@ export class EPCIS20XmlParser implements EPCISParser {
             
             for (const attr of attributes) {
               if (attr.id && attr._) {
+                // Ensure attributes exists to satisfy TypeScript
+                if (!mdItem.attributes) {
+                  mdItem.attributes = {};
+                }
                 mdItem.attributes[attr.id] = attr._;
               }
             }

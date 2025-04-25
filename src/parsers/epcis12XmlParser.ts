@@ -180,6 +180,59 @@ export class EPCIS12XmlParser implements EPCISParser {
               value: bt._
             }));
           }
+
+          // Handle childEPCs for AggregationEvents
+          if (eventType === 'AggregationEvent' && event.childEPCs) {
+            formattedEvent.childEPCs = Array.isArray(event.childEPCs.epc) 
+              ? event.childEPCs.epc 
+              : [event.childEPCs.epc];
+          }
+
+          // Handle parentID for AggregationEvents
+          if (eventType === 'AggregationEvent' && event.parentID) {
+            formattedEvent.parentID = event.parentID;
+          }
+
+          // Handle sourceList
+          if (event.extension?.sourceList) {
+            const sources = Array.isArray(event.extension.sourceList.source) 
+              ? event.extension.sourceList.source 
+              : [event.extension.sourceList.source];
+              
+            formattedEvent.sourceList = sources.map((source: any) => ({
+              type: source.type,
+              value: source._
+            }));
+          }
+
+          // Handle destinationList
+          if (event.extension?.destinationList) {
+            const destinations = Array.isArray(event.extension.destinationList.destination) 
+              ? event.extension.destinationList.destination 
+              : [event.extension.destinationList.destination];
+              
+            formattedEvent.destinationList = destinations.map((destination: any) => ({
+              type: destination.type,
+              value: destination._
+            }));
+          }
+
+          // Handle ILMD (Instance Lot Master Data)
+          if (event.extension?.ilmd) {
+            formattedEvent.ilmd = event.extension.ilmd;
+          }
+
+          // Handle childQuantityList for AggregationEvents
+          if (eventType === 'AggregationEvent' && event.extension?.childQuantityList) {
+            const quantityElements = Array.isArray(event.extension.childQuantityList.quantityElement) 
+              ? event.extension.childQuantityList.quantityElement 
+              : [event.extension.childQuantityList.quantityElement];
+              
+            formattedEvent.childQuantityList = quantityElements.map((qe: any) => ({
+              epcClass: qe.epcClass,
+              quantity: parseInt(qe.quantity, 10)
+            }));
+          }
           
           // Copy any other fields (extension fields)
           Object.keys(event).forEach(key => {
@@ -187,6 +240,16 @@ export class EPCIS12XmlParser implements EPCISParser {
               formattedEvent[key] = event[key];
             }
           });
+          
+          // Copy vendor-specific extensions
+          if (event.extension) {
+            Object.keys(event.extension).forEach(key => {
+              // Skip already processed extensions
+              if (!['sourceList', 'destinationList', 'ilmd', 'childQuantityList'].includes(key)) {
+                formattedEvent[key] = event.extension[key];
+              }
+            });
+          }
           
           events.push(formattedEvent);
         }
@@ -242,7 +305,7 @@ export class EPCIS12XmlParser implements EPCISParser {
           const mdItem: MasterData = {
             id,
             type,
-            attributes: {}
+            attributes: {} // Initialize empty attributes object
           };
           
           // Extract attributes
@@ -254,6 +317,10 @@ export class EPCIS12XmlParser implements EPCISParser {
             
             for (const attr of attributes) {
               if (attr.id && attr._) {
+                // Ensure attributes exists to satisfy TypeScript
+                if (!mdItem.attributes) {
+                  mdItem.attributes = {};
+                }
                 mdItem.attributes[attr.id] = attr._;
               }
             }

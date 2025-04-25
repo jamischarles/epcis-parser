@@ -1,0 +1,29 @@
+<EPCISMasterDataBody>
+    <VocabularyList>
+      <Vocabulary type="urn:epcglobal:epcis:vtype:BusinessLocation">
+        <VocabularyElementList>
+          <VocabularyElement id="urn:epc:id:sgln:0614141.33254.0">
+            <attribute id="urn:epcglobal:fmcg:mda:sslt:warehouse"/>
+          </VocabularyElement>
+          <VocabularyElement id="urn:epc:id:sgln:0614141.33482.0">
+            <attribute id="urn:epcglobal:fmcg:mda:sslt:retail"/>
+            <attribute id="urn:epcglobal:fmcg:mda:address">
+              <acme:Address
+                xmlns:acme="http://acme.com/types">
+                <Street>100 Nowhere Street</Street>
+                <City>Omaha</City>
+                <State>NB</State>
+                <Zip>70475</Zip>
+              </acme:Address>
+            </attribute>
+            <children>
+              <id>urn:epcglobal:fmcg:ssl:0614141.33482.201</id>
+            </children>
+          </VocabularyElement>
+          <VocabularyElement id="urn:epcglobal:fmcg:ssl:0614141.33482.201">
+            <attribute id="urn:epcglobal:fmcg:mda:sslt:201"/>
+          </VocabularyElement>
+        </VocabularyElementList>
+      </Vocabulary>
+    </VocabularyList>
+</EPCISMasterDataBody>

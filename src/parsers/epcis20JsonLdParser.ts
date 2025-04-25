@@ -192,6 +192,11 @@ export class EPCIS20JsonLdParser implements EPCISParser {
           
           // Extract attributes
           if (element.attributes) {
+            // Ensure attributes exists to satisfy TypeScript
+            if (!mdItem.attributes) {
+              mdItem.attributes = {};
+            }
+            
             for (const [attrId, attrValue] of Object.entries(element.attributes)) {
               mdItem.attributes[attrId] = attrValue;
             }

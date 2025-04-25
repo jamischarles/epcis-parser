@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF‐8"?>
+<epcis:EPCISDocument xmlns:cbvmda="urn:epcglobal:cbv:mda" xmlns:epcis="urn:epcglobal:epcis:xsd:1"
+  schemaVersion="1.2" creationDate="2016‐03‐ 15T10:11:16Z">
+<EPCISHeader>
+  <sbdh:StandardBusinessDocumentHeader>...</sbdh:StandardBusinessDocumentHeader>
+  <extension>
+    <EPCISMasterData>
+      <VocabularyList>
+        <Vocabulary type="urn:epcglobal:epcis:vtype:Location">
+          <VocabularyElementList>
+            <VocabularyElement id="urn:epc:id:sgln:036800.111111.0">
+              <attribute id="urn:epcglobal:cbv:mda#name">My Pharma LLC</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#streetAddressOne">3575 Zumstein Ave</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#streetAddressTwo">Suite 101</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#city">Washington</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#state">DC</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#postalCode">12345‐6789</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#countryCode">US</attribute>
+            </VocabularyElement>
+            <VocabularyElement id="urn:epc:id:sgln:0087701.00000.0">
+              <attribute id="urn:epcglobal:cbv:mda#name">AmerisourceBergen Corporation</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#streetAddressOne">1300 Morris Drive</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#city">Chesterbrook</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#state">PA</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#postalCode">19087‐000</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#countryCode">US</attribute>
+            </VocabularyElement>
+          </VocabularyElementList>
+        </Vocabulary>
+      </VocabularyList>
+    </EPCISMasterData>
+  </extension>
+</EPCISHeader>
+<EPCISBody>
+  <EventList>
+ <!‐‐ Shipping event for 3 SSCCs 101, 102, and 103. Shipment is covered by 2 Purchase Orders
+ (POs) #010451234 and #010454567. ‐‐>
+    <ObjectEvent>
+      <eventTime>2016‐03‐15T10:11:12Z</eventTime>
+      <eventTimeZoneOffset>‐05:00</eventTimeZoneOffset>
+      <epcList>
+        <epc>urn:epc:id:sscc:036800.00000000101</epc>
+        <epc>urn:epc:id:sscc:036800.00000000102</epc>
+        <epc>urn:epc:id:sscc:036800.00000000103</epc>
+      </epcList>
+      <action>OBSERVE</action>
+      <bizStep>urn:epcglobal:cbv:bizstep:shipping</bizStep>
+      <disposition>urn:epcglobal:cbv:disp:in_transit</disposition>
+      <readPoint>
+        <id>urn:epc:id:sgln:036800.111111.0</id>
+      </readPoint>
+      <bizTransactionList>
+ <!‐‐ Both PO# 1234 and PO#4567 are associated with this shipment ‐‐>
+        <bizTransaction
+          type="urn:epcglobal:cbv:btt:po">urn:epcglobal:cbv:bt:0716163011226:010451234</bizTransaction>
+        <bizTransaction
+          type="urn:epcglobal:cbv:btt:po">urn:epcglobal:cbv:bt:0716163011226:010454567</bizTransaction>
+      </bizTransactionList>
+      <extension>
+        <sourceList>
+          <source type="urn:epcglobal:cbv:sdt:owning_party">urn:epc:id:sgln:036800.111111.0</source>
+        </sourceList>
+        <destinationList>
+          <destination
+            type="urn:epcglobal:cbv:sdt:owning_party">urn:epc:id:sgln:0087701.00000.0</destination>
+        </destinationList>
+      </extension>
+    </ObjectEvent>
+ <!‐‐ Using a Transaction Event, record the shipping contents specifically associated with PO#
+      010451234 ‐‐> <TransactionEvent>
+ <!‐‐ Use the same eventTime in the transaction event as in the shipping event ‐‐>
+        <eventTime>2016‐03‐15T10:11:12Z</eventTime>
+        <eventTimeZoneOffset>‐05:00</eventTimeZoneOffset>
+        <bizTransactionList>
+ <!‐‐ Associate PO# 1234 to the EPCs in the business transaction ‐‐>
+          <bizTransaction
+            type="urn:epcglobal:cbv:btt:po">urn:epcglobal:cbv:bt:0399999999991:010451234</bizTransaction>
+        </bizTransactionList>
+        <epcList>
+          <epc>urn:epc:id:sscc:036800.00000000101</epc>
+          <epc>urn:epc:id:sgtin:036800.1123456.401</epc>
+          <epc>urn:epc:id:sgtin:036800.1123456.402</epc>
+        </epcList>
+        <action>ADD</action>
+        <bizStep>urn:epcglobal:cbv:bizstep:shipping</bizStep>
+        <disposition>urn:epcglobal:cbv:disp:in_transit</disposition> <readPoint>
+          <id>urn:epc:id:sgln:036800.111111.0</id>
+        </readPoint>
+      </TransactionEvent>
+ <!‐‐ Use the same eventTime in the transaction event as in the shipping event ‐‐>
+      <TransactionEvent>
+        <eventTime>2016‐03‐15T10:11:12Z</eventTime>
+        <eventTimeZoneOffset>‐05:00</eventTimeZoneOffset>
+        <bizTransactionList>
+ <!‐‐ Associate PO# 010454567 to the EPCs in the business transaction ‐‐>
+          <bizTransaction
+            type="urn:epcglobal:cbv:btt:po">urn:epcglobal:cbv:bt:0716163011226:010454567</bizTransaction>
+        </bizTransactionList>
+        <epcList>
+          <epc>urn:epc:id:sgtin:036800.1123456.501</epc>
+          <epc>urn:epc:id:sgtin:036800.1123456.502</epc>
+          <epc>urn:epc:id:sgtin:036800.1123456.503</epc>
+          <epc>urn:epc:id:sscc:036800.00000000102</epc>
+        </epcList>
+        <action>ADD</action>
+        <bizStep>urn:epcglobal:cbv:bizstep:shipping</bizStep>
+        <disposition>urn:epcglobal:cbv:disp:in_transit</disposition>
+        <readPoint>
+          <id>urn:epc:id:sgln:036800.111111.0</id>
+        </readPoint>
+      </TransactionEvent>
+    </EventList>
+  </EPCISBody>
+</epcis:EPCISDocument>

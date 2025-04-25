@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<epcis:EPCISDocument xmlns:cbvmda="urn:epcglobal:cbv:mda"
+  xmlns:epcis="urn:epcglobal:epcis:xsd:1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:wg4="http://epcis.wg4.fr/ns"
+  xmlns:sbdh="http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader"
+  schemaVersion="1.2" creationDate="2016-09-20T17:45:20.0Z">
+<EPCISHeader>
+  <sbdh:StandardBusinessDocumentHeader>
+    <sbdh:HeaderVersion>1.0</sbdh:HeaderVersion>
+    <sbdh:DocumentIdentification>
+      <sbdh:Standard>EPCglobal</sbdh:Standard>
+      <sbdh:TypeVersion>1.0</sbdh:TypeVersion>
+      <sbdh:InstanceIdentifier>201812244444400001</sbdh:InstanceIdentifier>
+      <sbdh:Type>Events</sbdh:Type>
+      <sbdh:CreationDateAndTime>2018-12-06T12:45:20.0Z</sbdh:CreationDateAndTime>
+    </sbdh:DocumentIdentification>
+  </sbdh:StandardBusinessDocumentHeader>
+  <extension>
+    <EPCISMasterData>
+      <VocabularyList>
+        <Vocabulary type="urn:epcglobal:epcis:vtype:EPCClass">
+          <VocabularyElementList>
+            <VocabularyElement id="urn:epc:class:lgtin:409876.0000001.L1">
+              <attribute id="urn:epcglobal:cbv:mda#itemExpirationDate">2022-12-31</attribute>
+            </VocabularyElement>
+            <VocabularyElement id="urn:epc:class:lgtin:409876.0000002.L4">
+              <attribute id="urn:epcglobal:cbv:mda#itemExpirationDate">2024-05-31</attribute>
+            </VocabularyElement>
+          </VocabularyElementList>
+        </Vocabulary>
+        <Vocabulary type="urn:epcglobal:epcis:vtype:Location">
+          <VocabularyElementList>
+            <!-- SourceList owning_party (sold from business party) -->
+            <VocabularyElement id="urn:epc:id:pgln:409876.500001">
+              <attribute id="urn:epcglobal:cbv:mda#name">GoodSource Pharmaceuticals</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#streetAddressOne">125 rue du médoc</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#city">Agen</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#postalCode">47000</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#countryCode">FR</attribute>
+              <attribute
+                id="http://epcis.wg4.fr/mda/EmailAddress">sales@goodsource.com</attribute>
+              <attribute id="http://epcis.wg4.fr/mda/TelephoneNumber">+33 5 48 22 11
+                00</attribute>
+              <attribute id="http://epcis.wg4.fr/mda/FaxNumber">+33 5 48 22 11 01</attribute>
+            </VocabularyElement>
+            <!-- SourceList location (ship from location) -->
+            <VocabularyElement id="urn:epc:id:sgln:333666.999033.0">
+              <attribute id="urn:epcglobal:cbv:mda#name">Hippocrate Logistics</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#streetAddressOne">57 chemin de la
+                palette</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#city">Laon</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#postalCode">02000</attribute>
+              <attribute id="urn:epcglobal:cbv:mda#countryCode">FR</attribute>
+              <attribute
+                id="http://epcis.wg4.fr/mda/additionalIdentificationTypeCode">VAT</attribute>
+              <attribute id="http://epcis.wg4.fr/mda/additionalIdentification">FR 40
+                123456824</attribute>
+            </VocabularyElement>
+            <!-- DestinationList owning_party (sold to business party) -->
+            <VocabularyElement id="urn:epc:id:pgln:541234.123777">
+              <attribute id="urn:epcglobal:cbv:mda#name">Healthy Hospital</attribute>
+              <attribute
+                id="http://epcis.wg4.fr/mda/EmailAddress">Mehdi_Kamant@HealthyHospital.com</attribu
+                  te>
+                <attribute id="http://epcis.wg4.fr/mda/TelephoneNumber">+33 1 55 55 67
+                  34</attribute>
+                <attribute id="urn:epcglobal:cbv:mda#streetAddressOne">21 boulevard de la
+                  santé</attribute>
+                <attribute id="urn:epcglobal:cbv:mda#city">Houilles</attribute>
+                <attribute id="urn:epcglobal:cbv:mda#postalCode">78880</attribute>
+                <attribute id="urn:epcglobal:cbv:mda#countryCode">FR</attribute>
+                <attribute
+                  id="http://epcis.wg4.fr/mda/additionalIdentificationTypeCode">FUI</attribute>
+                <attribute
+                  id="http://epcis.wg4.fr/mda/additionalIdentification">8646362</attribute>
+              </VocabularyElement>
+            </VocabularyElementList>
+          </Vocabulary>
+        </VocabularyList>
+      </EPCISMasterData>
+    </extension>
+  </EPCISHeader>
+  <EPCISBody>
+    <EventList>
+      <ObjectEvent>
+        <eventTime>2012-04-05T11:35:00.000Z</eventTime>
+        <eventTimeZoneOffset>-02:00</eventTimeZoneOffset>
+        <epcList>
+          <epc>urn:epc:id:sscc:098765.40670000101</epc>
+        </epcList>
+        <action>ADD</action>
+        <bizStep>urn:epcglobal:cbv:bizstep:commissioning</bizStep>
+        <disposition>urn:epcglobal:cbv:disp:active</disposition>
+        <bizLocation>
+          <id>urn:epc:id:sgln:409876.500001.0</id>
+        </bizLocation>
+      </ObjectEvent>
+      <ObjectEvent>
+        <eventTime>2012-04-05T11:35:00.000Z</eventTime>
+        <eventTimeZoneOffset>-02:00</eventTimeZoneOffset>
+        <epcList>
+          <epc>urn:epc:id:sgtin:409876.0789012.s012346671</epc>
+          <epc>urn:epc:id:sgtin:409876.0789012.s012346672</epc>
+          <epc>urn:epc:id:sgtin:409876.0789012.s012346770</epc>
+        </epcList>
+        <action>ADD</action>
+        <bizStep>urn:epcglobal:cbv:bizstep:commissioning</bizStep>
+        <disposition>urn:epcglobal:cbv:disp:active</disposition>
+        <bizLocation>
+          <id>urn:epc:id:sgln:409876.500001.0</id>
+        </bizLocation>
+        <extension>
+          <ilmd>
+            <cbvmda:lotNumber>00123</cbvmda:lotNumber>
+            <cbvmda:itemExpirationDate>2020-12-12T11</cbvmda:itemExpirationDate>
+          </ilmd>
+        </extension>
+        <extension>
+          <quantityList>
+            <quantityElement>
+              <epcClass>urn:epc:class:lgtin:409876.0000001.L1</epcClass>
+              <quantity>3500</quantity>
+            </quantityElement>
+            <quantityElement>
+              <epcClass>urn:epc:class:lgtin:409876.0000002.L4</epcClass>
+              <quantity>200</quantity>
+            </quantityElement>
+          </quantityList>
+        </extension>
+      </ObjectEvent>
+      <AggregationEvent>
+        <eventTime>2012-04-10T10:15:00.000Z</eventTime>
+        <eventTimeZoneOffset>-02:00</eventTimeZoneOffset>
+        <parentID>urn:epc:id:sscc:098765.40670000101</parentID>
+        <childEPCs>
+          <epc>urn:epc:id:sgtin:123456.0789012.s012346671</epc>
+          <epc>urn:epc:id:sgtin:123456.0789012.s012346672</epc>
+          <epc>urn:epc:id:sgtin:123456.0789012.s012346770</epc>
+        </childEPCs>
+        <extension>
+          <childQuantityList>
+            <quantityElement>
+              <epcClass>urn:epc:class:lgtin:409876.0000001.L1</epcClass>
+              <quantity>3500</quantity>
+            </quantityElement>
+            <quantityElement>
+              <epcClass>urn:epc:class:lgtin:409876.0000002.L4</epcClass>
+              <quantity>200</quantity>
+            </quantityElement>
+          </childQuantityList>
+        </extension>
+        <action>ADD</action>
+        <bizStep>urn:epcglobal:cbv:bizstep:packing</bizStep>
+        <disposition>urn:epcglobal:cbv:disp:in_progress</disposition>
+        <bizLocation>
+          <id>urn:epc:id:sgln:409876.500001.0</id>
+        </bizLocation>
+      </AggregationEvent>
+      <ObjectEvent>
+        <eventTime>2011-04-10T18:30:00.000Z</eventTime>
+        <eventTimeZoneOffset>-02:00</eventTimeZoneOffset>
+        <epcList>
+          <epc>urn:epc:id:sscc:098765.40670000101</epc>
+        </epcList>
+        <action>OBSERVE</action>
+        <bizStep>urn:epcglobal:cbv:bizstep:shipping</bizStep>
+        <disposition>urn:epcglobal:cbv:disp:in_transit</disposition>
+        <readPoint>
+          <id>urn:epc:id:sgln:333666.999033.0</id>
+        </readPoint>
+        <bizTransactionList>
+          <bizTransaction
+            type="urn:epcglobal:cbv:btt:po">urn:epcglobal:cbv:bt:5412341237772:PO3352</bizTrans
+              action>
+            <bizTransaction
+              type="urn:epcglobal:cbv:btt:inv">urn:epcglobal:cbv:bt:4098765000010:FA1283746</bizT
+                ransaction>
+            </bizTransactionList>
+            <extension>
+              <sourceList>
+                <!-- owning_party = from business party -->
+                <source
+                  type="urn:epcglobal:cbv:sdt:owning_party">urn:epc:id:pgln:409876.500001</source>
+                <!-- location = Ship from location -->
+                <source
+                  type="urn:epcglobal:cbv:sdt:location">urn:epc:id:sgln:333666.999033.0</source>
+              </sourceList>
+              <destinationList>
+                <!-- owning_paty = to business party -->
+                <destination
+                  type="urn:epcglobal:cbv:sdt:owning_party">urn:epc:id:pgln:541234.123777</destinatio
+                    n>
+                </destinationList>
+              </extension>
+            </ObjectEvent>
+          </EventList>
+        </EPCISBody>
+      </epcis:EPCISDocument>

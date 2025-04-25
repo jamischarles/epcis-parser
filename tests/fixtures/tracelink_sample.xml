@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<epcis:EPCISDocument xmlns:cbvmda="urn:epcglobal:cbv:mda" xmlns:epcis="urn:epcglobal:epcis:xsd:1" xmlns:gs1ushc="http://epcis.gs1us.org/hc/ns" xmlns:tl="http://epcis.tracelink.com/ns" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sbdh="http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader" schemaVersion="1.2" creationDate="2018-06-12T06:31:32Z">
+    <EPCISHeader>
+        <sbdh:StandardBusinessDocumentHeader>
+            <sbdh:HeaderVersion>1.0</sbdh:HeaderVersion>
+            <sbdh:Sender>
+                <sbdh:Identifier Authority="GLN">8779891013658</sbdh:Identifier>
+            </sbdh:Sender>
+            <sbdh:Receiver>
+                <sbdh:Identifier Authority="GLN">8811891013778</sbdh:Identifier>
+            </sbdh:Receiver>
+            <sbdh:DocumentIdentification>
+                <sbdh:Standard>EPCglobal</sbdh:Standard>
+                <sbdh:TypeVersion>1.0</sbdh:TypeVersion>
+                <sbdh:InstanceIdentifier>201806121745200001</sbdh:InstanceIdentifier>
+                <sbdh:Type>Events</sbdh:Type>
+                <sbdh:CreationDateAndTime>2018-06-12T06:31:32Z</sbdh:CreationDateAndTime>
+            </sbdh:DocumentIdentification>
+        </sbdh:StandardBusinessDocumentHeader>
+        <extension>
+            <EPCISMasterData>
+                <VocabularyList>
+                    <Vocabulary type="urn:epcglobal:epcis:vtype:Location">
+                    <VocabularyElementList>
+                        <!-- SourceList owning_party (sold from business party) -->
+                        <VocabularyElement id="urn:epc:id:sgln:088202.867701.0">
+                            <attribute id="urn:epcglobal:cbv:mda#name">Clara Manufacturing</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/additionalIdentifier">712333444</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/additionalIdentifierType">DEA</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/businessClassification">MANUFACTURER</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#streetAddressOne">10 Welsh St</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#city">Malden</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/district"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/village"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/houseNumber"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/township"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/corporateFax"></attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#state">MA</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#postalCode">02148</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#countryCode">US</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/premisesCode"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/taxRegistrationCode"></attribute>
+                        </VocabularyElement>
+                        <!-- SourceList location (ship from location) -->
+                        <VocabularyElement id="urn:epc:id:sgln:9297187.01994.0">
+                            <attribute id="urn:epcglobal:cbv:mda#name">Wilbur Pharmaceutical Imports</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/additionalIdentifier">412333444</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/additionalIdentifierType">DEA</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#streetAddressOne">154 Broadway</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#city">Somerville</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/district"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/village"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/houseNumber"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/township"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/corporateFax"></attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#state">MA</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#postalCode">02145</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#countryCode">US</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/premisesCode"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/taxRegistrationCode"></attribute>
+                        </VocabularyElement>
+                        <!-- DestinationList owning_party (sold to business party) -->
+                        <VocabularyElement id="urn:epc:id:sgln:8887777.01384.0">
+                            <attribute id="urn:epcglobal:cbv:mda#name">Watson Rx Wholesaler</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/additionalIdentifier">512333444</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/additionalIdentifierType">DEA</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/businessClassification">WHOLESALER</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#streetAddressOne">555 Neelan Road</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#city">Sacramento</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/district"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/village"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/houseNumber"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/township"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/corporateFax"></attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#state">CA</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#postalCode">95833</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#countryCode">US</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/premisesCode"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/taxRegistrationCode"></attribute>
+                        </VocabularyElement>
+                        <!-- DestinationList location (ship to location) -->
+                        <VocabularyElement id="http://epcis.gs1us.org/hc/dea/loc/512333444">
+                            <attribute id="urn:epcglobal:cbv:mda#name">Watson Rx Wholesaler</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/additionalIdentifier">512333444</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/additionalIdentifierType">DEA</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/businessClassification">WHOLESALER</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#streetAddressOne">555 Neelan Road</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#city">Sacramento</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/district"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/village"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/houseNumber"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/township"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/corporateFax"></attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#state">CA</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#postalCode">95833</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#countryCode">US</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/premisesCode"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/taxRegistrationCode"></attribute>
+                        </VocabularyElement>
+                      <!-- SourceList location (Carrier Party) -->
+                      <VocabularyElement id="urn:epc:id:sgln:064202.867703.0">
+                            <attribute id="urn:epcglobal:cbv:mda#name">FedEx</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#streetAddressOne">180 Fedex Road</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#streetAddressTwo">Building 6B</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#city">Atlanta</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/district"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/village"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/houseNumber"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/township"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/corporateFax"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/district">456</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#state">GA</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#postalCode">31305</attribute>
+                            <attribute id="urn:epcglobal:cbv:mda#countryCode">US</attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/premisesCode"></attribute>
+                            <attribute id="http://epcis.tracelink.com/mda/taxRegistrationCode"></attribute>
+                      </VocabularyElement>
+                    </VocabularyElementList>
+                </Vocabulary>
+            </VocabularyList>
+          </EPCISMasterData>
+        </extension>
+    </EPCISHeader>
+    <EPCISBody>
+        <EventList>
+            <AggregationEvent>
+                <eventTime>2018-06-12T06:31:32Z</eventTime>
+                <eventTimeZoneOffset>-04:00</eventTimeZoneOffset>
+                <parentID>urn:epc:id:sscc:005434.40000000019</parentID>
+                <childEPCs>
+                    <epc>urn:epc:id:sgtin:068202.0401034.11220207026272</epc>
+                    <epc>urn:epc:id:sgtin:068202.0401034.11220207026273</epc>
+                    <epc>urn:epc:id:sgtin:068202.0401034.11220207026274</epc>
+                    <epc>urn:epc:id:sgtin:068202.0401034.11220207026275</epc>
+                </childEPCs>
+                <action>ADD</action>
+                <bizStep>urn:epcglobal:cbv:bizstep:packing</bizStep>
+                <disposition>urn:epcglobal:cbv:disp:in_progress</disposition>
+                <bizLocation>
+                    <id>urn:epc:id:sgln:9297187.01994.0</id>
+                </bizLocation>
+                <tl:aggregationEventExtensions>
+                    <tl:epcOrderItemDetails>
+                        <tl:epcOrderItemList orderItemNumber="910">
+                            <tl:epcOrderItem>urn:epc:id:sscc:005434.40000000019</tl:epcOrderItem>
+                        </tl:epcOrderItemList>
+                    </tl:epcOrderItemDetails>
+                </tl:aggregationEventExtensions>
+            </AggregationEvent>
+            <AggregationEvent>
+                <eventTime>2018-06-12T06:31:32Z</eventTime>
+                <eventTimeZoneOffset>-04:00</eventTimeZoneOffset>
+                <parentID>urn:epc:id:sscc:005434.40000000020</parentID>
+                <childEPCs>
+                    <epc>urn:epc:id:sgtin:068202.0401034.11220207024592</epc>
+                    <epc>urn:epc:id:sgtin:068202.0401034.11220207024593</epc>
+                    <epc>urn:epc:id:sgtin:068202.0401034.11220207024594</epc>
+                    <epc>urn:epc:id:sgtin:068202.0401034.11220207024595</epc>
+                </childEPCs>
+                <action>ADD</action>
+                <bizStep>urn:epcglobal:cbv:bizstep:packing</bizStep>
+                <disposition>urn:epcglobal:cbv:disp:in_progress</disposition>
+                <bizLocation>
+                    <id>urn:epc:id:sgln:9297187.01994.0</id>
+                </bizLocation>
+                <tl:aggregationEventExtensions>
+                    <tl:epcOrderItemDetails>
+                        <tl:epcOrderItemList orderItemNumber="920">
+                            <tl:epcOrderItem>urn:epc:id:sscc:005434.40000000020</tl:epcOrderItem>
+                        </tl:epcOrderItemList>
+                    </tl:epcOrderItemDetails>
+                </tl:aggregationEventExtensions>
+            </AggregationEvent>
+        </EventList>
+    </EPCISBody>
+</epcis:EPCISDocument>
