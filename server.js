@@ -21,15 +21,48 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Get the list of available fixture files
 function getFixtureFiles() {
-  const fixturesPath = path.join(__dirname, 'attached_assets');
-  const files = fs.readdirSync(fixturesPath);
-  return files.filter(file => file.endsWith('.xml') || file.endsWith('.json'));
+  // Check both attached_assets and fixtures folders
+  const attachedPath = path.join(__dirname, 'attached_assets');
+  const fixturesPath = path.join(__dirname, 'fixtures');
+  
+  let files = [];
+  
+  // Read from attached_assets
+  try {
+    const attachedFiles = fs.readdirSync(attachedPath);
+    files = files.concat(attachedFiles.map(f => ({ name: f, folder: 'attached_assets' })));
+  } catch (error) {
+    console.log('No attached_assets folder found');
+  }
+  
+  // Read from fixtures
+  try {
+    const fixtureFiles = fs.readdirSync(fixturesPath);
+    files = files.concat(fixtureFiles.map(f => ({ name: f, folder: 'fixtures' })));
+  } catch (error) {
+    console.log('No fixtures folder found');
+  }
+  
+  // Filter to only include XML and JSON/JSONLD files
+  return files.filter(file => 
+    file.name.endsWith('.xml') || 
+    file.name.endsWith('.json') || 
+    file.name.endsWith('.jsonld')
+  );
 }
 
 // Read fixture content
 function readFixture(filename) {
-  const fixturesPath = path.join(__dirname, 'attached_assets');
-  return fs.readFileSync(path.join(fixturesPath, filename), 'utf8');
+  // Try to read from fixtures folder first, then attached_assets
+  const fixturesPath = path.join(__dirname, 'fixtures');
+  const attachedPath = path.join(__dirname, 'attached_assets');
+  
+  try {
+    return fs.readFileSync(path.join(fixturesPath, filename), 'utf8');
+  } catch (error) {
+    // If not found in fixtures, try attached_assets
+    return fs.readFileSync(path.join(attachedPath, filename), 'utf8');
+  }
 }
 
 // Home route

@@ -1,0 +1,94 @@
+{
+  "@context": [
+    "https://ref.gs1.org/standards/epcis/2.0.0/epcis-context.jsonld",
+    {
+      "gs1ushc": "http://epcis.gs1us.org/hc/ns"
+    }
+  ],
+  "type": "EPCISDocument",
+  "schemaVersion": "2.0",
+  "creationDate": "2012-03-25T17:10:16Z",
+  "epcisBody": {
+    "eventList": [
+      {
+        "type": "ObjectEvent",
+        "@context": [],
+        "eventTime": "2012-03-25T17:10:16Z",
+        "eventTimeZoneOffset": "-05:00",
+        "epcList": [
+          "https://id.gs1.org/01/00355154944954/21/40095247428196",
+          "https://id.gs1.org/01/00355154944954/21/40023811077021",
+          "https://id.gs1.org/01/00355154944954/21/40075808151866",
+          "https://id.gs1.org/01/00355154944954/21/40047623652721",
+          "https://id.gs1.org/01/30355154944955/21/40072894693743"
+        ],
+        "action": "ADD",
+        "bizStep": "commissioning",
+        "disposition": "active",
+        "readPoint": {
+          "id": "https://id.gs1.org/414/0300011111246"
+        },
+        "bizLocation": {
+          "id": "https://id.gs1.org/414/0300011111246"
+        },
+        "ilmd": {
+          "cbvmda:itemExpirationDate": "2015-03-15",
+          "cbvmda:lotNumber": "PR456"
+        }
+      },
+      {
+        "type": "AggregationEvent",
+        "@context": [],
+        "eventTime": "2012-03-25T17:10:17Z",
+        "eventTimeZoneOffset": "-05:00",
+        "parentID": "https://id.gs1.org/01/30355154944955/21/40072894693743",
+        "childEPCs": [
+          "https://id.gs1.org/01/00355154944954/21/40095247428196",
+          "https://id.gs1.org/01/00355154944954/21/40023811077021",
+          "https://id.gs1.org/01/00355154944954/21/40075808151866",
+          "https://id.gs1.org/01/00355154944954/21/40047623652721"
+        ],
+        "action": "ADD",
+        "bizStep": "packing",
+        "disposition": "in_progress",
+        "readPoint": {
+          "id": "https://id.gs1.org/414/0300011111246"
+        },
+        "bizLocation": {
+          "id": "https://id.gs1.org/414/0300011111246"
+        }
+      },
+      {
+        "type": "ObjectEvent",
+        "@context": [],
+        "eventTime": "2012-03-27T17:10:18Z",
+        "eventTimeZoneOffset": "-05:00",
+        "epcList": [
+          "https://id.gs1.org/01/30355154944955/21/40072894693743"
+        ],
+        "action": "OBSERVE",
+        "bizStep": "shipping",
+        "disposition": "in_transit",
+        "readPoint": {
+          "id": "https://id.gs1.org/414/0300011111246"
+        },
+        "bizTransactionList": [
+          {
+            "type": "inv",
+            "bizTransaction": "urn:epcglobal:cbv:bt:0300011111116:A123"
+          },
+          {
+            "type": "po",
+            "bizTransaction": "urn:epcglobal:cbv:bt:0399999999991:XYZ567"
+          }
+        ],
+        "sourceList": [
+          {
+            "type": "owning_party",
+            "source": "https://id.gs1.org/414/0300011111246"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -79,7 +79,7 @@
                                 <select class="form-select" id="fixtureSelect" name="fixtureFile" required>
                                     <option value="">-- Select a fixture file --</option>
                                     <% fixtures.forEach(file => { %>
-                                        <option value="<%= file %>"><%= file %></option>
+                                        <option value="<%= file.name %>"><%= file.folder %>/<%= file.name %></option>
                                     <% }); %>
                                 </select>
                             </div>

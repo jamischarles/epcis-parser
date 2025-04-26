@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<epcis:EPCISDocument xmlns:epcis="urn:epcglobal:epcis:xsd:2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="2.0" creationDate="2012-03-25T17:10:16Z">
+  <EPCISBody>
+    <EventList>
+      <ObjectEvent xmlns:gs1ushc="http://epcis.gs1us.org/hc/ns" xmlns:cbvmda="urn:epcglobal:cbv:mda">
+        <eventTime>2012-03-25T17:10:16Z</eventTime>
+        <eventTimeZoneOffset>-05:00</eventTimeZoneOffset>
+        <epcList>
+          <epc>urn:epc:id:sgtin:0355154.094495.40095247428196</epc>
+          <epc>urn:epc:id:sgtin:0355154.094495.40023811077021</epc>
+          <epc>urn:epc:id:sgtin:0355154.094495.40075808151866</epc>
+          <epc>urn:epc:id:sgtin:0355154.094495.40047623652721</epc>
+          <epc>urn:epc:id:sgtin:0355154.394495.40072894693743</epc>
+        </epcList>
+        <action>ADD</action>
+        <bizStep>urn:epcglobal:cbv:bizstep:commissioning</bizStep>
+        <disposition>urn:epcglobal:cbv:disp:active</disposition>
+        <readPoint>
+          <id>urn:epc:id:sgln:030001.111124.0</id>
+        </readPoint>
+        <bizLocation>
+          <id>urn:epc:id:sgln:030001.111124.0</id>
+        </bizLocation>
+        <ilmd>
+          <cbvmda:itemExpirationDate>2015-03-15</cbvmda:itemExpirationDate>
+          <cbvmda:lotNumber>PR456</cbvmda:lotNumber>
+        </ilmd>
+      </ObjectEvent>
+      <AggregationEvent xmlns:gs1ushc="http://epcis.gs1us.org/hc/ns" xmlns:cbvmda="urn:epcglobal:cbv:mda">
+        <eventTime>2012-03-25T17:10:17Z</eventTime>
+        <eventTimeZoneOffset>-05:00</eventTimeZoneOffset>
+        <parentID>urn:epc:id:sgtin:0355154.394495.40072894693743</parentID>
+        <childEPCs>
+          <epc>urn:epc:id:sgtin:0355154.094495.40095247428196</epc>
+          <epc>urn:epc:id:sgtin:0355154.094495.40023811077021</epc>
+          <epc>urn:epc:id:sgtin:0355154.094495.40075808151866</epc>
+          <epc>urn:epc:id:sgtin:0355154.094495.40047623652721</epc>
+        </childEPCs>
+        <action>ADD</action>
+        <bizStep>urn:epcglobal:cbv:bizstep:packing</bizStep>
+        <disposition>urn:epcglobal:cbv:disp:in_progress</disposition>
+        <readPoint>
+          <id>urn:epc:id:sgln:030001.111124.0</id>
+        </readPoint>
+        <bizLocation>
+          <id>urn:epc:id:sgln:030001.111124.0</id>
+        </bizLocation>
+      </AggregationEvent>
+      <ObjectEvent xmlns:gs1ushc="http://epcis.gs1us.org/hc/ns" xmlns:cbvmda="urn:epcglobal:cbv:mda">
+        <eventTime>2012-03-27T17:10:18Z</eventTime>
+        <eventTimeZoneOffset>-05:00</eventTimeZoneOffset>
+        <epcList>
+          <epc>urn:epc:id:sgtin:0355154.394495.40072894693743</epc>
+        </epcList>
+        <action>OBSERVE</action>
+        <bizStep>urn:epcglobal:cbv:bizstep:shipping</bizStep>
+        <disposition>urn:epcglobal:cbv:disp:in_transit</disposition>
+        <readPoint>
+          <id>urn:epc:id:sgln:030001.111124.0</id>
+        </readPoint>
+        <bizTransactionList>
+          <bizTransaction type="urn:epcglobal:cbv:btt:inv">urn:epcglobal:cbv:bt:0300011111116:A123</bizTransaction>
+          <bizTransaction type="urn:epcglobal:cbv:btt:po">urn:epcglobal:cbv:bt:0399999999991:XYZ567</bizTransaction>
+        </bizTransactionList>
+        <sourceList>
+          <source type="urn:epcglobal:cbv:sdt:owning_party">urn:epc:id:sgln:030001.111124.0</source>
+        </sourceList>
+      </ObjectEvent>
+    </EventList>
+  </EPCISBody>
+</epcis:EPCISDocument>
