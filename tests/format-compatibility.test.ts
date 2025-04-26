@@ -3,12 +3,70 @@
  * These tests verify that our parsers produce consistent output for the same data in different formats
  */
 
-import { expect, test, describe, beforeEach } from 'vitest';
+import { expect, test, describe, beforeEach, vi } from 'vitest';
 import { EPCIS12XmlParser } from '../src/parsers/epcis12XmlParser.js';
 import { EPCIS20XmlParser } from '../src/parsers/epcis20XmlParser.js';
 import { EPCIS20JsonLdParser } from '../src/parsers/epcis20JsonLdParser.js';
 import fs from 'fs';
 import path from 'path';
+
+// Mock the epcis2.js library to provide consistent test behavior
+vi.mock('epcis2.js', () => {
+  return {
+    EPCISDocument: class MockEPCISDocument {
+      private jsonData: any;
+      
+      constructor(jsonData: any) {
+        this.jsonData = jsonData;
+      }
+      
+      getEvents() {
+        // Extract events from JSON data - simplified for testing
+        try {
+          if (this.jsonData && this.jsonData.epcisBody && this.jsonData.epcisBody.eventList) {
+            return this.jsonData.epcisBody.eventList.map((event: any) => {
+              // Convert @type to type for consistency
+              if (event['@type'] && !event.type) {
+                event.type = event['@type'];
+              }
+              return event;
+            });
+          }
+        } catch (error) {
+          console.error('Error extracting events in mock:', error);
+        }
+        return [];
+      }
+      
+      getVocabulary() {
+        // Extract vocabulary from JSON data - simplified for testing
+        try {
+          const vocabulary: Record<string, any[]> = {};
+          
+          if (this.jsonData && 
+              this.jsonData.epcisHeader && 
+              this.jsonData.epcisHeader.epcisMasterData && 
+              this.jsonData.epcisHeader.epcisMasterData.vocabularyList) {
+            
+            const vocabList = this.jsonData.epcisHeader.epcisMasterData.vocabularyList;
+            vocabList.forEach((vocab: any) => {
+              const type = vocab.type.split(':').pop() || vocab.type;
+              vocabulary[type] = (vocab.vocabularyElements || []).map((elem: any) => ({
+                id: elem.id,
+                attributes: elem.attributes || {}
+              }));
+            });
+          }
+          
+          return vocabulary;
+        } catch (error) {
+          console.error('Error extracting vocabulary in mock:', error);
+          return {};
+        }
+      }
+    }
+  };
+});
 
 // Helper function to read fixture data
 function readFixture(filename: string): string {
