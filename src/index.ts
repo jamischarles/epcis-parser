@@ -4,10 +4,10 @@
  * A Node.js module for parsing and validating EPCIS 1.2/2.0 XML and JSON-LD files
  * with a consistent API.
  */
-import { EPCIS12XmlParser } from './parsers/epcis12XmlParser';
-import { EPCIS20XmlParser } from './parsers/epcis20XmlParser';
-import { EPCIS20JsonLdParser } from './parsers/epcis20JsonLdParser';
-import { ParserOptions, EPCISDocument, EPCISParser } from './types';
+import { EPCIS12XmlParser } from './parsers/epcis12XmlParser.js';
+import { EPCIS20XmlParser } from './parsers/epcis20XmlParser.js';
+import { EPCIS20JsonLdParser } from './parsers/epcis20JsonLdParser.js';
+import { ParserOptions, EPCISDocument, EPCISParser } from './types.js';
 
 /**
  * Factory function to create the appropriate parser based on the input format

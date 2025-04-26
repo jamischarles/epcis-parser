@@ -2,7 +2,7 @@
  * Tests for EPCIS 1.2 XML Parser
  */
 import { describe, expect, test, beforeEach } from 'vitest';
-import { EPCIS12XmlParser } from '../src/parsers/epcis12XmlParser';
+import { EPCIS12XmlParser } from '../src/parsers/epcis12XmlParser.js';
 
 describe('EPCIS12XmlParser', () => {
   // Sample EPCIS 1.2 XML document for testing

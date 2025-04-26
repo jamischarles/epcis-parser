@@ -3,7 +3,7 @@
  */
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
-import { ValidationResult } from '../types';
+import { ValidationResult } from '../types.js';
 
 // Initialize Ajv with formats
 const ajv = new Ajv({ allErrors: true });

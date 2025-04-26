@@ -13,9 +13,9 @@ import {
   ValidationResult, 
   ParserOptions,
   EPCISDocument
-} from '../types';
-import { validateXml } from '../validators/xmlValidator';
-import { ValidationError } from '../utils/errorMessages';
+} from '../types.js';
+import { validateXml } from '../validators/xmlValidator.js';
+import { ValidationError } from '../utils/errorMessages.js';
 
 export class EPCIS12XmlParser implements EPCISParser {
   private data: string;

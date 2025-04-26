@@ -2,7 +2,7 @@
  * Tests for EPCIS 2.0 XML Parser
  */
 import { describe, expect, test, beforeEach } from 'vitest';
-import { EPCIS20XmlParser } from '../src/parsers/epcis20XmlParser';
+import { EPCIS20XmlParser } from '../src/parsers/epcis20XmlParser.js';
 
 describe('EPCIS20XmlParser', () => {
   // Sample EPCIS 2.0 XML document for testing

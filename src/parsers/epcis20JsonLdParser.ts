@@ -13,9 +13,9 @@ import {
   ValidationResult, 
   ParserOptions,
   EPCISDocument
-} from '../types';
-import { validateJson } from '../validators/jsonValidator';
-import { ValidationError } from '../utils/errorMessages';
+} from '../types.js';
+import { validateJson } from '../validators/jsonValidator.js';
+import { ValidationError } from '../utils/errorMessages.js';
 
 export class EPCIS20JsonLdParser implements EPCISParser {
   private data: string;

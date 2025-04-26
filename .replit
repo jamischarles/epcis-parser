@@ -15,6 +15,10 @@ author = "agent"
 task = "workflow.run"
 args = "EPCIS Parser Tests"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "EPCIS Dev Server"
+
 [[workflows.workflow]]
 name = "EPCIS Parser Tests"
 author = "agent"
@@ -23,5 +27,18 @@ author = "agent"
 task = "shell.exec"
 args = "npx vitest run"
 
+[[workflows.workflow]]
+name = "EPCIS Dev Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node server.js"
+waitForPort = 5000
+
 [deployment]
 run = ["sh", "-c", "npm install && npm test"]
+
+[[ports]]
+localPort = 5000
+externalPort = 80

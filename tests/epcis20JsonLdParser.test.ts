@@ -2,8 +2,8 @@
  * Tests for EPCIS 2.0 JSON-LD Parser
  */
 import { describe, expect, test, beforeEach, vi } from 'vitest';
-import { EPCIS20JsonLdParser } from '../src/parsers/epcis20JsonLdParser';
-import { ValidationError } from '../src/utils/errorMessages';
+import { EPCIS20JsonLdParser } from '../src/parsers/epcis20JsonLdParser.js';
+import { ValidationError } from '../src/utils/errorMessages.js';
 
 vi.mock('epcis2.js', () => {
   return {

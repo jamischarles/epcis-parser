@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPCIS Parser Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow: auto;
+        }
+        .tab-content {
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+        }
+        .event-card {
+            margin-bottom: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+        .event-header {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+            cursor: pointer;
+        }
+        .event-body {
+            padding: 15px;
+            display: none;
+        }
+        .show-event {
+            display: block;
+        }
+        #loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .property-table td {
+            padding: 5px 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .property-table th {
+            text-align: left;
+            padding: 5px 10px;
+            border-bottom: 2px solid #ddd;
+        }
+        .section-title {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4">EPCIS Parser Demo</h1>
+        
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Select EPCIS File</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="parseForm">
+                            <div class="mb-3">
+                                <label for="fixtureSelect" class="form-label">Fixture File</label>
+                                <select class="form-select" id="fixtureSelect" name="fixtureFile" required>
+                                    <option value="">-- Select a fixture file --</option>
+                                    <% fixtures.forEach(file => { %>
+                                        <option value="<%= file %>"><%= file %></option>
+                                    <% }); %>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Parse</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p>Parsing EPCIS data...</p>
+        </div>
+        
+        <div id="results" style="display: none;">
+            <ul class="nav nav-tabs" id="resultTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="formatted-tab" data-bs-toggle="tab" data-bs-target="#formatted" 
+                            type="button" role="tab" aria-controls="formatted" aria-selected="true">
+                        Formatted View
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="raw-tab" data-bs-toggle="tab" data-bs-target="#raw" 
+                            type="button" role="tab" aria-controls="raw" aria-selected="false">
+                        Raw Data
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="parsed-tab" data-bs-toggle="tab" data-bs-target="#parsed" 
+                            type="button" role="tab" aria-controls="parsed" aria-selected="false">
+                        Parsed JSON
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="resultTabsContent">
+                <div class="tab-pane fade show active" id="formatted" role="tabpanel" aria-labelledby="formatted-tab">
+                    <div id="formattedContent">
+                        <!-- Header Section -->
+                        <div class="section-title">EPCIS Header</div>
+                        <div id="headerSection"></div>
+                        
+                        <!-- Sender/Receiver Section -->
+                        <div class="section-title">Sender & Receiver</div>
+                        <div id="senderReceiverSection"></div>
+                        
+                        <!-- Events Section -->
+                        <div class="section-title">Events</div>
+                        <div id="eventsSection"></div>
+                        
+                        <!-- Master Data Section -->
+                        <div class="section-title">Master Data</div>
+                        <div id="masterDataSection"></div>
+                    </div>
+                </div>
+                
+                <div class="tab-pane fade" id="raw" role="tabpanel" aria-labelledby="raw-tab">
+                    <pre id="rawContent"></pre>
+                </div>
+                
+                <div class="tab-pane fade" id="parsed" role="tabpanel" aria-labelledby="parsed-tab">
+                    <pre id="parsedContent"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const parseForm = document.getElementById('parseForm');
+            const loadingDiv = document.getElementById('loading');
+            const resultsDiv = document.getElementById('results');
+            
+            parseForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Show loading indicator
+                loadingDiv.style.display = 'block';
+                resultsDiv.style.display = 'none';
+                
+                // Get the selected fixture file
+                const formData = new FormData(parseForm);
+                const fixtureFile = formData.get('fixtureFile');
+                
+                try {
+                    // Send the request to the server
+                    const response = await fetch('/parse', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ fixtureFile })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to parse EPCIS data');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Populate the raw data tab
+                    document.getElementById('rawContent').textContent = data.raw;
+                    
+                    // Populate the parsed JSON tab
+                    document.getElementById('parsedContent').textContent = JSON.stringify(data.parsed, null, 2);
+                    
+                    // Populate the formatted view
+                    renderFormattedView(data.parsed);
+                    
+                    // Hide loading and show results
+                    loadingDiv.style.display = 'none';
+                    resultsDiv.style.display = 'block';
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error parsing EPCIS data: ' + error.message);
+                    loadingDiv.style.display = 'none';
+                }
+            });
+            
+            // Function to render the formatted view
+            function renderFormattedView(data) {
+                // Render header
+                renderHeader(data.header);
+                
+                // Render sender & receiver
+                renderSenderReceiver(data.sender, data.receiver);
+                
+                // Render events
+                renderEvents(data.events);
+                
+                // Render master data
+                renderMasterData(data.masterData);
+            }
+            
+            function renderHeader(header) {
+                const headerSection = document.getElementById('headerSection');
+                headerSection.innerHTML = '';
+                
+                if (!header || Object.keys(header).length === 0) {
+                    headerSection.innerHTML = '<p>No header information available</p>';
+                    return;
+                }
+                
+                const headerTable = document.createElement('table');
+                headerTable.className = 'property-table table table-sm';
+                
+                // Add header properties
+                for (const [key, value] of Object.entries(header)) {
+                    if (typeof value === 'object' && value !== null) {
+                        const row = headerTable.insertRow();
+                        const cell1 = row.insertCell(0);
+                        const cell2 = row.insertCell(1);
+                        
+                        cell1.textContent = key;
+                        cell2.innerHTML = `<pre>${JSON.stringify(value, null, 2)}</pre>`;
+                    } else {
+                        const row = headerTable.insertRow();
+                        const cell1 = row.insertCell(0);
+                        const cell2 = row.insertCell(1);
+                        
+                        cell1.textContent = key;
+                        cell2.textContent = value;
+                    }
+                }
+                
+                headerSection.appendChild(headerTable);
+            }
+            
+            function renderSenderReceiver(sender, receiver) {
+                const section = document.getElementById('senderReceiverSection');
+                section.innerHTML = '';
+                
+                if ((!sender || Object.keys(sender).length === 0) && 
+                    (!receiver || Object.keys(receiver).length === 0)) {
+                    section.innerHTML = '<p>No sender or receiver information available</p>';
+                    return;
+                }
+                
+                const table = document.createElement('table');
+                table.className = 'property-table table table-sm';
+                
+                // Add header row
+                const headerRow = table.insertRow();
+                const headerCell1 = headerRow.insertCell(0);
+                const headerCell2 = headerRow.insertCell(1);
+                
+                headerCell1.innerHTML = '<strong>Field</strong>';
+                headerCell2.innerHTML = '<strong>Value</strong>';
+                
+                // Add sender
+                if (sender && Object.keys(sender).length > 0) {
+                    for (const [key, value] of Object.entries(sender)) {
+                        const row = table.insertRow();
+                        const cell1 = row.insertCell(0);
+                        const cell2 = row.insertCell(1);
+                        
+                        cell1.textContent = `Sender ${key}`;
+                        cell2.textContent = value;
+                    }
+                }
+                
+                // Add receiver
+                if (receiver && Object.keys(receiver).length > 0) {
+                    for (const [key, value] of Object.entries(receiver)) {
+                        const row = table.insertRow();
+                        const cell1 = row.insertCell(0);
+                        const cell2 = row.insertCell(1);
+                        
+                        cell1.textContent = `Receiver ${key}`;
+                        cell2.textContent = value;
+                    }
+                }
+                
+                section.appendChild(table);
+            }
+            
+            function renderEvents(events) {
+                const eventsSection = document.getElementById('eventsSection');
+                eventsSection.innerHTML = '';
+                
+                if (!events || events.length === 0) {
+                    eventsSection.innerHTML = '<p>No events available</p>';
+                    return;
+                }
+                
+                // Add event count
+                const countDiv = document.createElement('div');
+                countDiv.className = 'mb-3';
+                countDiv.innerHTML = `<strong>Total Events: ${events.length}</strong>`;
+                eventsSection.appendChild(countDiv);
+                
+                // Create accordion for events
+                events.forEach((event, index) => {
+                    const eventCard = document.createElement('div');
+                    eventCard.className = 'event-card';
+                    
+                    // Event header
+                    const eventHeader = document.createElement('div');
+                    eventHeader.className = 'event-header';
+                    eventHeader.innerHTML = `
+                        <strong>${event.type}</strong> - 
+                        ${event.eventTime} (${event.action || 'N/A'}) - 
+                        ${event.bizStep || 'N/A'}
+                    `;
+                    eventHeader.addEventListener('click', () => {
+                        const body = eventHeader.nextElementSibling;
+                        body.classList.toggle('show-event');
+                    });
+                    
+                    // Event body
+                    const eventBody = document.createElement('div');
+                    eventBody.className = 'event-body';
+                    
+                    // Create table for event properties
+                    const table = document.createElement('table');
+                    table.className = 'property-table table table-sm';
+                    
+                    for (const [key, value] of Object.entries(event)) {
+                        // Skip large arrays and objects to keep the view clean
+                        if (
+                            (Array.isArray(value) && value.length > 10) || 
+                            (typeof value === 'object' && value !== null && Object.keys(value).length > 5)
+                        ) {
+                            const row = table.insertRow();
+                            const cell1 = row.insertCell(0);
+                            const cell2 = row.insertCell(1);
+                            
+                            cell1.textContent = key;
+                            cell2.innerHTML = `<details>
+                                <summary>Click to expand (large object)</summary>
+                                <pre>${JSON.stringify(value, null, 2)}</pre>
+                            </details>`;
+                        } else if (typeof value === 'object' && value !== null) {
+                            const row = table.insertRow();
+                            const cell1 = row.insertCell(0);
+                            const cell2 = row.insertCell(1);
+                            
+                            cell1.textContent = key;
+                            cell2.innerHTML = `<pre>${JSON.stringify(value, null, 2)}</pre>`;
+                        } else {
+                            const row = table.insertRow();
+                            const cell1 = row.insertCell(0);
+                            const cell2 = row.insertCell(1);
+                            
+                            cell1.textContent = key;
+                            cell2.textContent = value;
+                        }
+                    }
+                    
+                    eventBody.appendChild(table);
+                    
+                    // Append header and body to card
+                    eventCard.appendChild(eventHeader);
+                    eventCard.appendChild(eventBody);
+                    
+                    // Append card to section
+                    eventsSection.appendChild(eventCard);
+                });
+            }
+            
+            function renderMasterData(masterData) {
+                const masterDataSection = document.getElementById('masterDataSection');
+                masterDataSection.innerHTML = '';
+                
+                if (!masterData || Object.keys(masterData).length === 0) {
+                    masterDataSection.innerHTML = '<p>No master data available</p>';
+                    return;
+                }
+                
+                // Add master data count
+                const countDiv = document.createElement('div');
+                countDiv.className = 'mb-3';
+                countDiv.innerHTML = `<strong>Total Master Data Items: ${Object.keys(masterData).length}</strong>`;
+                masterDataSection.appendChild(countDiv);
+                
+                // Create accordion for master data items
+                for (const [id, data] of Object.entries(masterData)) {
+                    const mdCard = document.createElement('div');
+                    mdCard.className = 'event-card';
+                    
+                    // Master data header
+                    const mdHeader = document.createElement('div');
+                    mdHeader.className = 'event-header';
+                    mdHeader.innerHTML = `
+                        <strong>${data.type || 'Unknown Type'}</strong> - 
+                        ${id} - 
+                        ${data.name || 'Unnamed'}
+                    `;
+                    mdHeader.addEventListener('click', () => {
+                        const body = mdHeader.nextElementSibling;
+                        body.classList.toggle('show-event');
+                    });
+                    
+                    // Master data body
+                    const mdBody = document.createElement('div');
+                    mdBody.className = 'event-body';
+                    
+                    // Create table for properties
+                    const table = document.createElement('table');
+                    table.className = 'property-table table table-sm';
+                    
+                    for (const [key, value] of Object.entries(data)) {
+                        if (typeof value === 'object' && value !== null) {
+                            const row = table.insertRow();
+                            const cell1 = row.insertCell(0);
+                            const cell2 = row.insertCell(1);
+                            
+                            cell1.textContent = key;
+                            cell2.innerHTML = `<pre>${JSON.stringify(value, null, 2)}</pre>`;
+                        } else {
+                            const row = table.insertRow();
+                            const cell1 = row.insertCell(0);
+                            const cell2 = row.insertCell(1);
+                            
+                            cell1.textContent = key;
+                            cell2.textContent = value;
+                        }
+                    }
+                    
+                    mdBody.appendChild(table);
+                    
+                    // Append header and body to card
+                    mdCard.appendChild(mdHeader);
+                    mdCard.appendChild(mdBody);
+                    
+                    // Append card to section
+                    masterDataSection.appendChild(mdCard);
+                }
+            }
+            
+            // Add event listeners to toggle event details
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('event-header') || e.target.parentElement.classList.contains('event-header')) {
+                    const header = e.target.classList.contains('event-header') ? e.target : e.target.parentElement;
+                    const body = header.nextElementSibling;
+                    body.classList.toggle('show-event');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

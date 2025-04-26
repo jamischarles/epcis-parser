@@ -1,15 +1,13 @@
 /**
  * Tests for parsing EPCIS master data
  */
-import fs from 'fs';
-import path from 'path';
+import { readFileSync } from 'fs';
 import { describe, expect, test } from 'vitest';
-import { EPCIS12XmlParser } from '../src/parsers/epcis12XmlParser';
+import { EPCIS12XmlParser } from '../src/parsers/epcis12XmlParser.js';
 
 // Helper function to read test fixtures
 function readFixture(filename: string): string {
-  const fixturePath = path.join(__dirname, 'fixtures', filename);
-  return fs.readFileSync(fixturePath, 'utf8');
+  return readFileSync(`./attached_assets/${filename}`, 'utf8');
 }
 
 describe('EPCIS Master Data Parsing', () => {

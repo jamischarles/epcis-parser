@@ -1,10 +1,10 @@
 /**
  * XML Validator for EPCIS documents
  */
-import * as fs from 'fs';
-import * as path from 'path';
+import { readFileSync } from 'fs';
+import path from 'path';
 import * as libxml from 'libxmljs2';
-import { ValidationResult } from '../types';
+import { ValidationResult } from '../types.js';
 
 // Cache for schema documents (avoid reading from disk on each validation)
 const schemaCache: Record<string, libxml.Document> = {};
@@ -21,15 +21,15 @@ async function loadSchema(version: string): Promise<libxml.Document> {
 
   let schemaPath: string;
   if (version === '1.2') {
-    schemaPath = path.resolve(__dirname, '../schemas/epcis12.xsd');
+    schemaPath = path.join(__dirname, '../schemas/epcis12.xsd');
   } else if (version === '2.0') {
-    schemaPath = path.resolve(__dirname, '../schemas/epcis20.xsd');
+    schemaPath = path.join(__dirname, '../schemas/epcis20.xsd');
   } else {
     throw new Error(`Unsupported EPCIS version: ${version}`);
   }
 
   try {
-    const schemaContent = fs.readFileSync(schemaPath, 'utf-8');
+    const schemaContent = readFileSync(schemaPath, 'utf-8');
     const schema = libxml.parseXml(schemaContent);
     schemaCache[version] = schema;
     return schema;
@@ -61,7 +61,13 @@ export async function validateXml(xmlData: string, version: string): Promise<Val
     }
 
     // Root element check
-    const rootName = xmlDoc.root().name();
+    const root = xmlDoc.root();
+    if (!root) {
+      result.errors.push('Missing root element in XML document');
+      return result;
+    }
+    
+    const rootName = root.name();
     if (rootName !== 'EPCISDocument') {
       result.errors.push(`Invalid root element: expected 'EPCISDocument', got '${rootName}'`);
       return result;
