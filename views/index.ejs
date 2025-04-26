@@ -142,6 +142,18 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        .badge {
+            font-size: 0.75rem;
+            font-weight: normal;
+            padding: 0.25rem 0.5rem;
+        }
+        .list-group-item {
+            font-family: monospace;
+        }
+        .highlight-event {
+            background-color: rgba(255, 243, 205, 0.5);
+            transition: background-color 0.5s ease;
+        }
     </style>
 </head>
 <body>
@@ -562,6 +574,10 @@
                         events.forEach((event, idx) => {
                             const eventCard = document.createElement('div');
                             eventCard.className = 'event-card';
+                            // Create a unique ID for this event card
+                            const globalIndex = data.parsed.events.findIndex(e => e === event);
+                            const eventId = `event-${globalIndex}`;
+                            eventCard.id = eventId;
                             
                             // Event header
                             const eventHeader = document.createElement('div');
@@ -749,8 +765,18 @@
                             const mdBody = document.createElement('div');
                             mdBody.className = 'event-body';
                             
-                            // Create table for attributes
+                            // Create container for master data info
+                            const mdInfoContainer = document.createElement('div');
+                            
+                            // Add attributes section
                             if (item.attributes && Object.keys(item.attributes).length > 0) {
+                                // Add section header
+                                const attrHeader = document.createElement('h6');
+                                attrHeader.className = 'mt-3 mb-2';
+                                attrHeader.textContent = 'Attributes';
+                                mdInfoContainer.appendChild(attrHeader);
+                                
+                                // Create attributes table
                                 const attrTable = document.createElement('table');
                                 attrTable.className = 'property-table';
                                 
@@ -795,10 +821,102 @@
                                     }
                                 }
                                 
-                                mdBody.appendChild(attrTable);
+                                mdInfoContainer.appendChild(attrTable);
                             } else {
-                                mdBody.innerHTML = '<p>No attributes available</p>';
+                                const noAttrMsg = document.createElement('p');
+                                noAttrMsg.textContent = 'No attributes available';
+                                mdInfoContainer.appendChild(noAttrMsg);
                             }
+                            
+                            // Add Related EPCs section if available
+                            if (item.relatedEPCs && item.relatedEPCs.length > 0) {
+                                // Add section header with badge showing count
+                                const relatedHeader = document.createElement('h6');
+                                relatedHeader.className = 'mt-4 mb-2 d-flex align-items-center';
+                                relatedHeader.innerHTML = `Related EPCs 
+                                    <span class="badge bg-secondary ms-2">${item.relatedEPCs.length}</span>`;
+                                mdInfoContainer.appendChild(relatedHeader);
+                                
+                                // Create list of related EPCs
+                                const epcList = document.createElement('ul');
+                                epcList.className = 'list-group';
+                                
+                                item.relatedEPCs.forEach(epc => {
+                                    const epcItem = document.createElement('li');
+                                    epcItem.className = 'list-group-item py-1 px-2';
+                                    epcItem.style.fontSize = '0.85rem';
+                                    epcItem.textContent = epc;
+                                    epcList.appendChild(epcItem);
+                                });
+                                
+                                mdInfoContainer.appendChild(epcList);
+                            }
+                            
+                            // Add Related Events section if available
+                            if (item.relatedEvents && item.relatedEvents.length > 0) {
+                                // Add section header with badge showing count
+                                const eventsHeader = document.createElement('h6');
+                                eventsHeader.className = 'mt-4 mb-2 d-flex align-items-center';
+                                eventsHeader.innerHTML = `Related Events 
+                                    <span class="badge bg-primary ms-2">${item.relatedEvents.length}</span>`;
+                                mdInfoContainer.appendChild(eventsHeader);
+                                
+                                // Create table of related events
+                                const eventsTable = document.createElement('table');
+                                eventsTable.className = 'property-table';
+                                
+                                const headerRow = eventsTable.insertRow();
+                                const headerCell1 = headerRow.insertCell(0);
+                                const headerCell2 = headerRow.insertCell(1);
+                                
+                                headerCell1.innerHTML = '<strong>Type</strong>';
+                                headerCell2.innerHTML = '<strong>Time</strong>';
+                                
+                                item.relatedEvents.forEach(event => {
+                                    const row = eventsTable.insertRow();
+                                    const cell1 = row.insertCell(0);
+                                    const cell2 = row.insertCell(1);
+                                    
+                                    // Add event type with link to event
+                                    cell1.innerHTML = `<span class="badge-type">${event.eventType}</span>`;
+                                    
+                                    // Add formatted event time
+                                    const eventTime = new Date(event.eventTime);
+                                    cell2.textContent = eventTime.toLocaleString();
+                                    
+                                    // Add click handler to highlight the related event
+                                    row.style.cursor = 'pointer';
+                                    row.addEventListener('click', () => {
+                                        // Remove highlight from any previously highlighted events
+                                        document.querySelectorAll('.highlight-event').forEach(el => {
+                                            el.classList.remove('highlight-event');
+                                        });
+                                        
+                                        // Find the event element by index and scroll to it
+                                        const targetEvent = document.getElementById(`event-${event.eventIndex}`);
+                                        if (targetEvent) {
+                                            // Add highlight class
+                                            targetEvent.classList.add('highlight-event');
+                                            
+                                            // Expand the event if it's collapsed
+                                            const eventBody = targetEvent.querySelector('.event-body');
+                                            if (eventBody && !eventBody.classList.contains('show-event')) {
+                                                eventBody.classList.add('show-event');
+                                            }
+                                            
+                                            // Scroll to the event
+                                            targetEvent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                        } else {
+                                            // If event not found, just scroll to the events section
+                                            document.getElementById('events-formatted').scrollIntoView({ behavior: 'smooth' });
+                                        }
+                                    });
+                                });
+                                
+                                mdInfoContainer.appendChild(eventsTable);
+                            }
+                            
+                            mdBody.appendChild(mdInfoContainer);
                             
                             mdCard.appendChild(mdHeader);
                             mdCard.appendChild(mdBody);

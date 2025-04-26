@@ -301,13 +301,92 @@ async function parseEPCIS(xmlData) {
     console.error('Error parsing EPCIS data:', err);
   }
   
+  // Analyze master data and events to establish links based on matching identifier patterns
+  const linkedData = linkMasterDataToEvents(masterData, events);
+  
   return {
     events,
-    masterData,
+    masterData: linkedData,
     header,
     sender,
     receiver
   };
+}
+
+/**
+ * Links master data to related events by matching GS1 identifier patterns
+ * @param {Object} masterData The master data objects
+ * @param {Array} events The list of events
+ * @returns {Object} Enhanced master data with related events information
+ */
+function linkMasterDataToEvents(masterData, events) {
+  const linkedMasterData = { ...masterData };
+  
+  // Process each master data entry
+  for (const [id, item] of Object.entries(linkedMasterData)) {
+    // Extract the company prefix pattern from the ID
+    // GS1 identifiers often have this format: urn:epc:id:(sgln|sgtin|sscc|etc):companyPrefix.locationRef.extension
+    const match = id.match(/:[0-9]+\.([0-9]+)\.?/);
+    if (!match) continue; // No pattern found
+    
+    const prefixPattern = match[0]; // Like ":0355154.094495."
+    const companyPrefix = match[1]; // Just the numeric part like "094495"
+    
+    // Find all events with EPCs containing this pattern
+    const relatedEPCs = [];
+    const relatedEvents = [];
+    
+    // Search through all events
+    events.forEach((event, eventIndex) => {
+      let isRelated = false;
+      
+      // Check epcList
+      if (event.epcList && Array.isArray(event.epcList)) {
+        event.epcList.forEach(epc => {
+          if (epc.includes(prefixPattern) || epc.includes(companyPrefix)) {
+            relatedEPCs.push(epc);
+            isRelated = true;
+          }
+        });
+      }
+      
+      // Check childEPCs
+      if (event.childEPCs && Array.isArray(event.childEPCs)) {
+        event.childEPCs.forEach(epc => {
+          if (epc.includes(prefixPattern) || epc.includes(companyPrefix)) {
+            relatedEPCs.push(epc);
+            isRelated = true;
+          }
+        });
+      }
+      
+      // Check parent ID
+      if (event.parentID && (event.parentID.includes(prefixPattern) || event.parentID.includes(companyPrefix))) {
+        relatedEPCs.push(event.parentID);
+        isRelated = true;
+      }
+      
+      // If this event is related, add it to the list
+      if (isRelated) {
+        relatedEvents.push({
+          eventIndex,
+          eventType: event.type,
+          eventTime: event.eventTime
+        });
+      }
+    });
+    
+    // Add the related information to the master data item
+    if (relatedEPCs.length > 0) {
+      linkedMasterData[id].relatedEPCs = [...new Set(relatedEPCs)]; // Remove duplicates
+    }
+    
+    if (relatedEvents.length > 0) {
+      linkedMasterData[id].relatedEvents = relatedEvents;
+    }
+  }
+  
+  return linkedMasterData;
 }
 
 // Parse EPCIS data
