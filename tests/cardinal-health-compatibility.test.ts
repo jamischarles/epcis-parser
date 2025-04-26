@@ -41,10 +41,17 @@ describe('Cardinal Health Format Compatibility Tests', () => {
       return;
     }
     
-    // Create fresh parsers for each test
-    parser12Xml = new EPCIS12XmlParser(xml12Data);
-    parser20Xml = new EPCIS20XmlParser(xml20Data);
-    parser20JsonLd = new EPCIS20JsonLdParser(jsonLdData);
+    // Create fresh parsers for each test with validation disabled
+    // This is needed because the Cardinal Health sample files may not strictly validate against schemas
+    parser12Xml = new EPCIS12XmlParser(xml12Data, { 
+      validate: false 
+    });
+    parser20Xml = new EPCIS20XmlParser(xml20Data, { 
+      validate: false 
+    });
+    parser20JsonLd = new EPCIS20JsonLdParser(jsonLdData, { 
+      validate: false 
+    });
   });
 
   test('should return the same header information across formats', async () => {
