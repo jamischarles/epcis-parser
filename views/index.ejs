@@ -154,6 +154,24 @@
             background-color: rgba(255, 243, 205, 0.5);
             transition: background-color 0.5s ease;
         }
+        
+        .header-link {
+            font-size: 0.75rem;
+            color: #6c757d;
+            text-decoration: none;
+            margin-left: 10px;
+            font-weight: normal;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            transition: all 0.2s ease;
+        }
+        
+        .header-link:hover {
+            background-color: #e2e6ea;
+            color: #495057;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
@@ -751,8 +769,42 @@
                             // Master data header
                             const mdHeader = document.createElement('div');
                             mdHeader.className = 'event-header';
+                            // Find the best name for this item using attribute priorities
+                            let itemName = '';
+                            
+                            // Check attributes in the specified priority order
+                            const namePriorityKeys = [
+                                'urn:epcglobal:cbv:mda#regulatedProductName',
+                                'urn:epcglobal:cbv:mda#descriptionShort',
+                                'urn:epcglobal:cbv:mda#labelDescription',
+                                'urn:epcglobal:cbv:mda#name'
+                            ];
+                            
+                            // Go through each key in order until we find a value
+                            if (item.attributes) {
+                                for (const key of namePriorityKeys) {
+                                    if (item.attributes[key]) {
+                                        const value = item.attributes[key];
+                                        // Handle different attribute value formats
+                                        if (typeof value === 'object' && value !== null && value.value) {
+                                            itemName = value.value;
+                                            break;
+                                        } else if (typeof value === 'string') {
+                                            itemName = value;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            // Fallback to item.name or ID if no attribute values found
+                            if (!itemName) {
+                                itemName = item.name || 
+                                          (item.id ? item.id.split(':').pop() : 'Unnamed Item');
+                            }
+                            
                             mdHeader.innerHTML = `
-                                <strong>${item.name || 'Unnamed Item'}</strong><br>
+                                <strong>${itemName}</strong><br>
                                 ID: ${item.id}
                             `;
                             
