@@ -314,15 +314,19 @@ async function parseEPCIS(xmlData) {
 }
 
 /**
- * Links master data to related events by matching GS1 identifier patterns
+ * Links master data to related events and vice versa by matching GS1 identifier patterns
  * @param {Object} masterData The master data objects
  * @param {Array} events The list of events
- * @returns {Object} Enhanced master data with related events information
+ * @returns {Object} Enhanced data with two-way links between master data and events
  */
 function linkMasterDataToEvents(masterData, events) {
   const linkedMasterData = { ...masterData };
+  const linkedEvents = [...events]; // Create a copy of events to modify
   
-  // Process each master data entry
+  // Create a mapping of company prefixes to master data IDs
+  const prefixToMasterDataMap = new Map();
+  
+  // Process each master data entry to extract patterns
   for (const [id, item] of Object.entries(linkedMasterData)) {
     // Extract the company prefix pattern from the ID
     // GS1 identifiers often have this format: urn:epc:id:(sgln|sgtin|sscc|etc):companyPrefix.locationRef.extension
@@ -332,58 +336,88 @@ function linkMasterDataToEvents(masterData, events) {
     const prefixPattern = match[0]; // Like ":0355154.094495."
     const companyPrefix = match[1]; // Just the numeric part like "094495"
     
-    // Find all events with EPCs containing this pattern
-    const relatedEPCs = [];
-    const relatedEvents = [];
+    // Store in our mapping for quick lookup
+    prefixToMasterDataMap.set(prefixPattern, id);
+    prefixToMasterDataMap.set(companyPrefix, id);
     
-    // Search through all events
-    events.forEach((event, eventIndex) => {
-      let isRelated = false;
-      
-      // Check epcList
-      if (event.epcList && Array.isArray(event.epcList)) {
-        event.epcList.forEach(epc => {
-          if (epc.includes(prefixPattern) || epc.includes(companyPrefix)) {
-            relatedEPCs.push(epc);
-            isRelated = true;
-          }
-        });
-      }
-      
-      // Check childEPCs
-      if (event.childEPCs && Array.isArray(event.childEPCs)) {
-        event.childEPCs.forEach(epc => {
-          if (epc.includes(prefixPattern) || epc.includes(companyPrefix)) {
-            relatedEPCs.push(epc);
-            isRelated = true;
-          }
-        });
-      }
-      
-      // Check parent ID
-      if (event.parentID && (event.parentID.includes(prefixPattern) || event.parentID.includes(companyPrefix))) {
-        relatedEPCs.push(event.parentID);
-        isRelated = true;
-      }
-      
-      // If this event is related, add it to the list
-      if (isRelated) {
-        relatedEvents.push({
-          eventIndex,
-          eventType: event.type,
-          eventTime: event.eventTime
-        });
-      }
-    });
+    // Initialize arrays for related EPCs and events
+    linkedMasterData[id].relatedEPCs = linkedMasterData[id].relatedEPCs || [];
+    linkedMasterData[id].relatedEvents = linkedMasterData[id].relatedEvents || [];
+  }
+  
+  // Now scan through the events to link them to master data
+  linkedEvents.forEach((event, eventIndex) => {
+    // Initialize array for related master data
+    event.relatedMasterData = event.relatedMasterData || [];
     
-    // Add the related information to the master data item
-    if (relatedEPCs.length > 0) {
-      linkedMasterData[id].relatedEPCs = [...new Set(relatedEPCs)]; // Remove duplicates
+    // Track which master data items are related to this event
+    const relatedMasterDataIds = new Set();
+    
+    // Helper function to check an EPC and update links
+    const checkAndLinkEPC = (epc) => {
+      if (!epc) return;
+      
+      // Check this EPC against all our known prefixes
+      for (const [prefix, masterDataId] of prefixToMasterDataMap.entries()) {
+        if (epc.includes(prefix)) {
+          // Add this master data ID to the event's related list
+          relatedMasterDataIds.add(masterDataId);
+          
+          // Add this EPC to the master data's related list
+          if (!linkedMasterData[masterDataId].relatedEPCs.includes(epc)) {
+            linkedMasterData[masterDataId].relatedEPCs.push(epc);
+          }
+          
+          // Make sure the event is listed in the master data's related events
+          const eventExists = linkedMasterData[masterDataId].relatedEvents.some(
+            relEvent => relEvent.eventIndex === eventIndex
+          );
+          
+          if (!eventExists) {
+            linkedMasterData[masterDataId].relatedEvents.push({
+              eventIndex,
+              eventType: event.type,
+              eventTime: event.eventTime
+            });
+          }
+        }
+      }
+    };
+    
+    // Check various EPC fields in the event
+    // Check epcList
+    if (event.epcList && Array.isArray(event.epcList)) {
+      event.epcList.forEach(checkAndLinkEPC);
     }
     
-    if (relatedEvents.length > 0) {
-      linkedMasterData[id].relatedEvents = relatedEvents;
+    // Check childEPCs
+    if (event.childEPCs && Array.isArray(event.childEPCs)) {
+      event.childEPCs.forEach(checkAndLinkEPC);
     }
+    
+    // Check parent ID
+    if (event.parentID) {
+      checkAndLinkEPC(event.parentID);
+    }
+    
+    // Add the related master data IDs to the event
+    event.relatedMasterData = [...relatedMasterDataIds].map(id => ({
+      id,
+      name: linkedMasterData[id].name || '',
+      type: linkedMasterData[id].type || 'unknown'
+    }));
+  });
+  
+  // Ensure all master data items have unique EPCs without duplicates
+  for (const id in linkedMasterData) {
+    if (linkedMasterData[id].relatedEPCs) {
+      linkedMasterData[id].relatedEPCs = [...new Set(linkedMasterData[id].relatedEPCs)];
+    }
+  }
+  
+  // Update the original events array with our linked events
+  for (let i = 0; i < events.length; i++) {
+    events[i] = linkedEvents[i];
   }
   
   return linkedMasterData;
