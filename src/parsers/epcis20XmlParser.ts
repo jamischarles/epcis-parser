@@ -444,7 +444,7 @@ export class EPCIS20XmlParser implements EPCISParser {
       
       // Last resort - look in master data for location info if it matches sender/receiver 
       // patterns in IDs (this is a common practice in some implementations)
-      if (Object.keys(this.document.masterData || {}).length > 0) {
+      if (this.document.masterData && Object.keys(this.document.masterData).length > 0) {
         // If we found a master data with PGLN identifier, that might be a party
         for (const [id, data] of Object.entries(this.document.masterData)) {
           // Look for PGLN identifiers which are used for parties
