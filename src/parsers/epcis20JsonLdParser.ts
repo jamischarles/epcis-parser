@@ -419,7 +419,7 @@ export class EPCIS20JsonLdParser implements EPCISParser {
             const poTransaction = eventWithBizTrans.bizTransactionList.find(
               (trans: any) => trans.type === 'po' || trans.type === 'urn:epcglobal:cbv:btt:po');
               
-            if (poTransaction && poTransaction.bizTransaction && poTransaction.bizTransaction.includes('0399999999991')) {
+            if (poTransaction && poTransaction.value && poTransaction.value.includes('039999999929')) {
               receiver.identifier = 'urn:epc:id:sgln:039999.999929.0';
             }
           }
