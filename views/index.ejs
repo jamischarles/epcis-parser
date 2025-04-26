@@ -16,12 +16,32 @@
             border-radius: 5px;
             max-height: 400px;
             overflow: auto;
+            font-size: 12px;
         }
-        .tab-content {
-            padding: 20px;
+        .column-view {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+        }
+        .column {
+            flex: 1;
+            min-width: 300px;
             border: 1px solid #dee2e6;
-            border-top: none;
-            border-radius: 0 0 5px 5px;
+            border-radius: 5px;
+            padding: 0;
+            background-color: #fff;
+        }
+        .column-header {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: bold;
+            text-align: center;
+        }
+        .column-content {
+            padding: 10px;
+            overflow-y: auto;
+            max-height: 700px;
         }
         .event-card {
             margin-bottom: 15px;
@@ -46,9 +66,14 @@
             text-align: center;
             padding: 20px;
         }
+        .property-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
         .property-table td {
             padding: 5px 10px;
             border-bottom: 1px solid #eee;
+            font-size: 0.85rem;
         }
         .property-table th {
             text-align: left;
@@ -56,14 +81,50 @@
             border-bottom: 2px solid #ddd;
         }
         .section-title {
-            margin-top: 20px;
+            margin-top: 15px;
             margin-bottom: 10px;
             font-weight: bold;
+        }
+        .section-card {
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .section-header {
+            background-color: #e9ecef;
+            padding: 8px 15px;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: bold;
+        }
+        .section-body {
+            padding: 10px 15px;
+        }
+        .badge-type {
+            background-color: #6c757d;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+        .badge-action {
+            background-color: #28a745;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+        .spinner-border {
+            width: 3rem; 
+            height: 3rem;
+        }
+        .raw-code {
+            font-family: monospace;
+            font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container-fluid">
         <h1 class="my-4">EPCIS Parser Demo</h1>
         
         <div class="row mb-4">
@@ -98,54 +159,148 @@
         </div>
         
         <div id="results" style="display: none;">
-            <ul class="nav nav-tabs" id="resultTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="formatted-tab" data-bs-toggle="tab" data-bs-target="#formatted" 
-                            type="button" role="tab" aria-controls="formatted" aria-selected="true">
-                        Formatted View
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="raw-tab" data-bs-toggle="tab" data-bs-target="#raw" 
-                            type="button" role="tab" aria-controls="raw" aria-selected="false">
-                        Raw Data
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="parsed-tab" data-bs-toggle="tab" data-bs-target="#parsed" 
-                            type="button" role="tab" aria-controls="parsed" aria-selected="false">
-                        Parsed JSON
-                    </button>
-                </li>
-            </ul>
-            
-            <div class="tab-content" id="resultTabsContent">
-                <div class="tab-pane fade show active" id="formatted" role="tabpanel" aria-labelledby="formatted-tab">
-                    <div id="formattedContent">
-                        <!-- Header Section -->
-                        <div class="section-title">EPCIS Header</div>
-                        <div id="headerSection"></div>
-                        
-                        <!-- Sender/Receiver Section -->
-                        <div class="section-title">Sender & Receiver</div>
-                        <div id="senderReceiverSection"></div>
-                        
-                        <!-- Events Section -->
-                        <div class="section-title">Events</div>
-                        <div id="eventsSection"></div>
-                        
-                        <!-- Master Data Section -->
-                        <div class="section-title">Master Data</div>
-                        <div id="masterDataSection"></div>
+            <!-- Document Header Section -->
+            <div class="section-card">
+                <div class="section-header">
+                    EPCIS Document Header
+                </div>
+                <div class="section-body">
+                    <div class="column-view">
+                        <!-- Column 1: Formatted Data -->
+                        <div class="column">
+                            <div class="column-header">Formatted Data</div>
+                            <div class="column-content" id="header-formatted"></div>
+                        </div>
+                        <!-- Column 2: Parsed JSON -->
+                        <div class="column">
+                            <div class="column-header">Parsed JSON</div>
+                            <div class="column-content">
+                                <pre id="header-json"></pre>
+                            </div>
+                        </div>
+                        <!-- Column 3: Raw Data -->
+                        <div class="column">
+                            <div class="column-header">Raw Data</div>
+                            <div class="column-content">
+                                <pre id="header-raw" class="raw-code"></pre>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="tab-pane fade" id="raw" role="tabpanel" aria-labelledby="raw-tab">
-                    <pre id="rawContent"></pre>
+            </div>
+            
+            <!-- Sender & Receiver Section -->
+            <div class="section-card">
+                <div class="section-header">
+                    Sender & Receiver Information
                 </div>
-                
-                <div class="tab-pane fade" id="parsed" role="tabpanel" aria-labelledby="parsed-tab">
-                    <pre id="parsedContent"></pre>
+                <div class="section-body">
+                    <div class="column-view">
+                        <!-- Column 1: Formatted Data -->
+                        <div class="column">
+                            <div class="column-header">Formatted Data</div>
+                            <div class="column-content" id="sender-receiver-formatted"></div>
+                        </div>
+                        <!-- Column 2: Parsed JSON -->
+                        <div class="column">
+                            <div class="column-header">Parsed JSON</div>
+                            <div class="column-content">
+                                <pre id="sender-receiver-json"></pre>
+                            </div>
+                        </div>
+                        <!-- Column 3: Raw Data -->
+                        <div class="column">
+                            <div class="column-header">Raw Data</div>
+                            <div class="column-content">
+                                <pre id="sender-receiver-raw" class="raw-code"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Events Section -->
+            <div class="section-card">
+                <div class="section-header">
+                    EPCIS Events
+                </div>
+                <div class="section-body">
+                    <div class="column-view">
+                        <!-- Column 1: Formatted Data -->
+                        <div class="column">
+                            <div class="column-header">Formatted Data</div>
+                            <div class="column-content" id="events-formatted"></div>
+                        </div>
+                        <!-- Column 2: Parsed JSON -->
+                        <div class="column">
+                            <div class="column-header">Parsed JSON</div>
+                            <div class="column-content">
+                                <pre id="events-json"></pre>
+                            </div>
+                        </div>
+                        <!-- Column 3: Raw Data -->
+                        <div class="column">
+                            <div class="column-header">Raw Data</div>
+                            <div class="column-content">
+                                <pre id="events-raw" class="raw-code"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Master Data Section -->
+            <div class="section-card">
+                <div class="section-header">
+                    Master Data
+                </div>
+                <div class="section-body">
+                    <div class="column-view">
+                        <!-- Column 1: Formatted Data -->
+                        <div class="column">
+                            <div class="column-header">Formatted Data</div>
+                            <div class="column-content" id="master-data-formatted"></div>
+                        </div>
+                        <!-- Column 2: Parsed JSON -->
+                        <div class="column">
+                            <div class="column-header">Parsed JSON</div>
+                            <div class="column-content">
+                                <pre id="master-data-json"></pre>
+                            </div>
+                        </div>
+                        <!-- Column 3: Raw Data -->
+                        <div class="column">
+                            <div class="column-header">Raw Data</div>
+                            <div class="column-content">
+                                <pre id="master-data-raw" class="raw-code"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Full EPCIS Document Section -->
+            <div class="section-card">
+                <div class="section-header">
+                    Complete EPCIS Document
+                </div>
+                <div class="section-body">
+                    <div class="column-view">
+                        <!-- Column 1: Parsed JSON -->
+                        <div class="column">
+                            <div class="column-header">Parsed JSON</div>
+                            <div class="column-content">
+                                <pre id="complete-json"></pre>
+                            </div>
+                        </div>
+                        <!-- Column 2: Raw Data -->
+                        <div class="column">
+                            <div class="column-header">Raw Data</div>
+                            <div class="column-content">
+                                <pre id="complete-raw" class="raw-code"></pre>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -157,6 +312,21 @@
             const parseForm = document.getElementById('parseForm');
             const loadingDiv = document.getElementById('loading');
             const resultsDiv = document.getElementById('results');
+            
+            // Helper function to extract XML snippets
+            function extractXmlSection(xml, sectionName) {
+                // This is a naive approach and may need improvement for complex XML
+                const startTag = `<${sectionName}`;
+                const endTag = `</${sectionName}>`;
+                
+                const startIndex = xml.indexOf(startTag);
+                if (startIndex === -1) return 'Section not found';
+                
+                const endIndex = xml.indexOf(endTag, startIndex);
+                if (endIndex === -1) return 'Section end tag not found';
+                
+                return xml.substring(startIndex, endIndex + endTag.length);
+            }
             
             parseForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
@@ -185,14 +355,12 @@
                     
                     const data = await response.json();
                     
-                    // Populate the raw data tab
-                    document.getElementById('rawContent').textContent = data.raw;
-                    
-                    // Populate the parsed JSON tab
-                    document.getElementById('parsedContent').textContent = JSON.stringify(data.parsed, null, 2);
-                    
-                    // Populate the formatted view
-                    renderFormattedView(data.parsed);
+                    // Populate all sections with the data
+                    populateHeaderSection(data);
+                    populateSenderReceiverSection(data);
+                    populateEventsSection(data);
+                    populateMasterDataSection(data);
+                    populateCompleteDocumentSection(data);
                     
                     // Hide loading and show results
                     loadingDiv.style.display = 'none';
@@ -204,265 +372,430 @@
                 }
             });
             
-            // Function to render the formatted view
-            function renderFormattedView(data) {
-                // Render header
-                renderHeader(data.header);
-                
-                // Render sender & receiver
-                renderSenderReceiver(data.sender, data.receiver);
-                
-                // Render events
-                renderEvents(data.events);
-                
-                // Render master data
-                renderMasterData(data.masterData);
-            }
-            
-            function renderHeader(header) {
-                const headerSection = document.getElementById('headerSection');
-                headerSection.innerHTML = '';
-                
-                if (!header || Object.keys(header).length === 0) {
-                    headerSection.innerHTML = '<p>No header information available</p>';
-                    return;
-                }
+            function populateHeaderSection(data) {
+                // Column 1: Formatted header data
+                const headerFormatted = document.getElementById('header-formatted');
+                headerFormatted.innerHTML = '';
                 
                 const headerTable = document.createElement('table');
-                headerTable.className = 'property-table table table-sm';
+                headerTable.className = 'property-table';
                 
-                // Add header properties
-                for (const [key, value] of Object.entries(header)) {
-                    if (typeof value === 'object' && value !== null) {
+                if (data.parsed.header && Object.keys(data.parsed.header).length > 0) {
+                    for (const [key, value] of Object.entries(data.parsed.header)) {
+                        if (key === 'StandardBusinessDocumentHeader' || key === 'EPCISMasterData') continue; // Skip these complex objects
+                        
                         const row = headerTable.insertRow();
                         const cell1 = row.insertCell(0);
                         const cell2 = row.insertCell(1);
                         
                         cell1.textContent = key;
-                        cell2.innerHTML = `<pre>${JSON.stringify(value, null, 2)}</pre>`;
-                    } else {
-                        const row = headerTable.insertRow();
-                        const cell1 = row.insertCell(0);
-                        const cell2 = row.insertCell(1);
                         
-                        cell1.textContent = key;
-                        cell2.textContent = value;
-                    }
-                }
-                
-                headerSection.appendChild(headerTable);
-            }
-            
-            function renderSenderReceiver(sender, receiver) {
-                const section = document.getElementById('senderReceiverSection');
-                section.innerHTML = '';
-                
-                if ((!sender || Object.keys(sender).length === 0) && 
-                    (!receiver || Object.keys(receiver).length === 0)) {
-                    section.innerHTML = '<p>No sender or receiver information available</p>';
-                    return;
-                }
-                
-                const table = document.createElement('table');
-                table.className = 'property-table table table-sm';
-                
-                // Add header row
-                const headerRow = table.insertRow();
-                const headerCell1 = headerRow.insertCell(0);
-                const headerCell2 = headerRow.insertCell(1);
-                
-                headerCell1.innerHTML = '<strong>Field</strong>';
-                headerCell2.innerHTML = '<strong>Value</strong>';
-                
-                // Add sender
-                if (sender && Object.keys(sender).length > 0) {
-                    for (const [key, value] of Object.entries(sender)) {
-                        const row = table.insertRow();
-                        const cell1 = row.insertCell(0);
-                        const cell2 = row.insertCell(1);
-                        
-                        cell1.textContent = `Sender ${key}`;
-                        cell2.textContent = value;
-                    }
-                }
-                
-                // Add receiver
-                if (receiver && Object.keys(receiver).length > 0) {
-                    for (const [key, value] of Object.entries(receiver)) {
-                        const row = table.insertRow();
-                        const cell1 = row.insertCell(0);
-                        const cell2 = row.insertCell(1);
-                        
-                        cell1.textContent = `Receiver ${key}`;
-                        cell2.textContent = value;
-                    }
-                }
-                
-                section.appendChild(table);
-            }
-            
-            function renderEvents(events) {
-                const eventsSection = document.getElementById('eventsSection');
-                eventsSection.innerHTML = '';
-                
-                if (!events || events.length === 0) {
-                    eventsSection.innerHTML = '<p>No events available</p>';
-                    return;
-                }
-                
-                // Add event count
-                const countDiv = document.createElement('div');
-                countDiv.className = 'mb-3';
-                countDiv.innerHTML = `<strong>Total Events: ${events.length}</strong>`;
-                eventsSection.appendChild(countDiv);
-                
-                // Create accordion for events
-                events.forEach((event, index) => {
-                    const eventCard = document.createElement('div');
-                    eventCard.className = 'event-card';
-                    
-                    // Event header
-                    const eventHeader = document.createElement('div');
-                    eventHeader.className = 'event-header';
-                    eventHeader.innerHTML = `
-                        <strong>${event.type}</strong> - 
-                        ${event.eventTime} (${event.action || 'N/A'}) - 
-                        ${event.bizStep || 'N/A'}
-                    `;
-                    eventHeader.addEventListener('click', () => {
-                        const body = eventHeader.nextElementSibling;
-                        body.classList.toggle('show-event');
-                    });
-                    
-                    // Event body
-                    const eventBody = document.createElement('div');
-                    eventBody.className = 'event-body';
-                    
-                    // Create table for event properties
-                    const table = document.createElement('table');
-                    table.className = 'property-table table table-sm';
-                    
-                    for (const [key, value] of Object.entries(event)) {
-                        // Skip large arrays and objects to keep the view clean
-                        if (
-                            (Array.isArray(value) && value.length > 10) || 
-                            (typeof value === 'object' && value !== null && Object.keys(value).length > 5)
-                        ) {
-                            const row = table.insertRow();
-                            const cell1 = row.insertCell(0);
-                            const cell2 = row.insertCell(1);
-                            
-                            cell1.textContent = key;
-                            cell2.innerHTML = `<details>
-                                <summary>Click to expand (large object)</summary>
-                                <pre>${JSON.stringify(value, null, 2)}</pre>
-                            </details>`;
-                        } else if (typeof value === 'object' && value !== null) {
-                            const row = table.insertRow();
-                            const cell1 = row.insertCell(0);
-                            const cell2 = row.insertCell(1);
-                            
-                            cell1.textContent = key;
-                            cell2.innerHTML = `<pre>${JSON.stringify(value, null, 2)}</pre>`;
-                        } else {
-                            const row = table.insertRow();
-                            const cell1 = row.insertCell(0);
-                            const cell2 = row.insertCell(1);
-                            
-                            cell1.textContent = key;
-                            cell2.textContent = value;
-                        }
-                    }
-                    
-                    eventBody.appendChild(table);
-                    
-                    // Append header and body to card
-                    eventCard.appendChild(eventHeader);
-                    eventCard.appendChild(eventBody);
-                    
-                    // Append card to section
-                    eventsSection.appendChild(eventCard);
-                });
-            }
-            
-            function renderMasterData(masterData) {
-                const masterDataSection = document.getElementById('masterDataSection');
-                masterDataSection.innerHTML = '';
-                
-                if (!masterData || Object.keys(masterData).length === 0) {
-                    masterDataSection.innerHTML = '<p>No master data available</p>';
-                    return;
-                }
-                
-                // Add master data count
-                const countDiv = document.createElement('div');
-                countDiv.className = 'mb-3';
-                countDiv.innerHTML = `<strong>Total Master Data Items: ${Object.keys(masterData).length}</strong>`;
-                masterDataSection.appendChild(countDiv);
-                
-                // Create accordion for master data items
-                for (const [id, data] of Object.entries(masterData)) {
-                    const mdCard = document.createElement('div');
-                    mdCard.className = 'event-card';
-                    
-                    // Master data header
-                    const mdHeader = document.createElement('div');
-                    mdHeader.className = 'event-header';
-                    mdHeader.innerHTML = `
-                        <strong>${data.type || 'Unknown Type'}</strong> - 
-                        ${id} - 
-                        ${data.name || 'Unnamed'}
-                    `;
-                    mdHeader.addEventListener('click', () => {
-                        const body = mdHeader.nextElementSibling;
-                        body.classList.toggle('show-event');
-                    });
-                    
-                    // Master data body
-                    const mdBody = document.createElement('div');
-                    mdBody.className = 'event-body';
-                    
-                    // Create table for properties
-                    const table = document.createElement('table');
-                    table.className = 'property-table table table-sm';
-                    
-                    for (const [key, value] of Object.entries(data)) {
                         if (typeof value === 'object' && value !== null) {
-                            const row = table.insertRow();
-                            const cell1 = row.insertCell(0);
-                            const cell2 = row.insertCell(1);
-                            
-                            cell1.textContent = key;
-                            cell2.innerHTML = `<pre>${JSON.stringify(value, null, 2)}</pre>`;
+                            cell2.innerHTML = '<details><summary>View details</summary><pre>' + 
+                                JSON.stringify(value, null, 2) + '</pre></details>';
                         } else {
-                            const row = table.insertRow();
-                            const cell1 = row.insertCell(0);
-                            const cell2 = row.insertCell(1);
-                            
-                            cell1.textContent = key;
                             cell2.textContent = value;
                         }
                     }
-                    
-                    mdBody.appendChild(table);
-                    
-                    // Append header and body to card
-                    mdCard.appendChild(mdHeader);
-                    mdCard.appendChild(mdBody);
-                    
-                    // Append card to section
-                    masterDataSection.appendChild(mdCard);
+                    headerFormatted.appendChild(headerTable);
+                } else {
+                    headerFormatted.innerHTML = '<p>No header information available</p>';
                 }
+                
+                // Column 2: JSON data
+                document.getElementById('header-json').textContent = 
+                    JSON.stringify(data.parsed.header || {}, null, 2);
+                
+                // Column 3: Raw XML/JSON snippet for header
+                let rawHeaderSection = 'Header section not found';
+                if (data.raw.includes('<EPCISHeader>')) {
+                    rawHeaderSection = extractXmlSection(data.raw, 'EPCISHeader');
+                } else if (data.raw.includes('"EPCISHeader":')) {
+                    // For JSON, just use the full document for now
+                    // A better approach would be to extract just the header portion
+                    rawHeaderSection = data.raw;
+                }
+                document.getElementById('header-raw').textContent = rawHeaderSection;
             }
             
-            // Add event listeners to toggle event details
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('event-header') || e.target.parentElement.classList.contains('event-header')) {
-                    const header = e.target.classList.contains('event-header') ? e.target : e.target.parentElement;
-                    const body = header.nextElementSibling;
-                    body.classList.toggle('show-event');
+            function populateSenderReceiverSection(data) {
+                // Column 1: Formatted sender/receiver data
+                const senderReceiverFormatted = document.getElementById('sender-receiver-formatted');
+                senderReceiverFormatted.innerHTML = '';
+                
+                // Create combined table for sender/receiver
+                const srTable = document.createElement('table');
+                srTable.className = 'property-table';
+                
+                if (data.parsed.sender && Object.keys(data.parsed.sender).length > 0) {
+                    // Add a header row for Sender
+                    const senderHeaderRow = srTable.insertRow();
+                    const senderHeaderCell = senderHeaderRow.insertCell(0);
+                    senderHeaderCell.colSpan = 2;
+                    senderHeaderCell.style.backgroundColor = '#e9ecef';
+                    senderHeaderCell.innerHTML = '<strong>Sender Information</strong>';
+                    
+                    for (const [key, value] of Object.entries(data.parsed.sender)) {
+                        const row = srTable.insertRow();
+                        const cell1 = row.insertCell(0);
+                        const cell2 = row.insertCell(1);
+                        
+                        cell1.textContent = key;
+                        cell2.textContent = value;
+                    }
                 }
-            });
+                
+                if (data.parsed.receiver && Object.keys(data.parsed.receiver).length > 0) {
+                    // Add a separator row if we already added sender info
+                    if (data.parsed.sender && Object.keys(data.parsed.sender).length > 0) {
+                        const spacerRow = srTable.insertRow();
+                        spacerRow.style.height = '20px';
+                    }
+                    
+                    // Add a header row for Receiver
+                    const receiverHeaderRow = srTable.insertRow();
+                    const receiverHeaderCell = receiverHeaderRow.insertCell(0);
+                    receiverHeaderCell.colSpan = 2;
+                    receiverHeaderCell.style.backgroundColor = '#e9ecef';
+                    receiverHeaderCell.innerHTML = '<strong>Receiver Information</strong>';
+                    
+                    for (const [key, value] of Object.entries(data.parsed.receiver)) {
+                        const row = srTable.insertRow();
+                        const cell1 = row.insertCell(0);
+                        const cell2 = row.insertCell(1);
+                        
+                        cell1.textContent = key;
+                        cell2.textContent = value;
+                    }
+                }
+                
+                if (
+                    (!data.parsed.sender || Object.keys(data.parsed.sender).length === 0) && 
+                    (!data.parsed.receiver || Object.keys(data.parsed.receiver).length === 0)
+                ) {
+                    senderReceiverFormatted.innerHTML = '<p>No sender or receiver information available</p>';
+                } else {
+                    senderReceiverFormatted.appendChild(srTable);
+                }
+                
+                // Column 2: JSON data
+                const senderReceiverJson = {
+                    sender: data.parsed.sender || {},
+                    receiver: data.parsed.receiver || {}
+                };
+                document.getElementById('sender-receiver-json').textContent = 
+                    JSON.stringify(senderReceiverJson, null, 2);
+                
+                // Column 3: Raw XML/JSON snippet
+                let rawSRSection = 'Sender/Receiver section not found';
+                if (data.raw.includes('<StandardBusinessDocumentHeader>')) {
+                    rawSRSection = extractXmlSection(data.raw, 'StandardBusinessDocumentHeader');
+                } else if (data.raw.includes('"sender":') || data.raw.includes('"receiver":')) {
+                    // For JSON, just show the sender/receiver parts
+                    try {
+                        const jsonObj = JSON.parse(data.raw);
+                        const srObj = {};
+                        if (jsonObj.sender) srObj.sender = jsonObj.sender;
+                        if (jsonObj.receiver) srObj.receiver = jsonObj.receiver;
+                        rawSRSection = JSON.stringify(srObj, null, 2);
+                    } catch (e) {
+                        console.error('Error parsing JSON:', e);
+                    }
+                }
+                document.getElementById('sender-receiver-raw').textContent = rawSRSection;
+            }
+            
+            function populateEventsSection(data) {
+                // Column 1: Formatted events data
+                const eventsFormatted = document.getElementById('events-formatted');
+                eventsFormatted.innerHTML = '';
+                
+                if (!data.parsed.events || data.parsed.events.length === 0) {
+                    eventsFormatted.innerHTML = '<p>No events available</p>';
+                } else {
+                    // Add event count
+                    const countDiv = document.createElement('div');
+                    countDiv.className = 'mb-3';
+                    countDiv.innerHTML = `<strong>Total Events: ${data.parsed.events.length}</strong>`;
+                    eventsFormatted.appendChild(countDiv);
+                    
+                    // Group events by type for better organization
+                    const eventsByType = {};
+                    data.parsed.events.forEach(event => {
+                        const type = event.type || 'Unknown';
+                        if (!eventsByType[type]) {
+                            eventsByType[type] = [];
+                        }
+                        eventsByType[type].push(event);
+                    });
+                    
+                    // Create event cards grouped by type
+                    for (const [type, events] of Object.entries(eventsByType)) {
+                        // Type header
+                        const typeHeader = document.createElement('div');
+                        typeHeader.className = 'section-title';
+                        typeHeader.innerHTML = `${type} Events (${events.length})`;
+                        eventsFormatted.appendChild(typeHeader);
+                        
+                        // Events of this type
+                        events.forEach((event, idx) => {
+                            const eventCard = document.createElement('div');
+                            eventCard.className = 'event-card';
+                            
+                            // Event header
+                            const eventHeader = document.createElement('div');
+                            eventHeader.className = 'event-header';
+                            
+                            // Create a more informative header with badges
+                            let headerHtml = `<strong>${type}</strong> `;
+                            
+                            if (event.action) {
+                                headerHtml += `<span class="badge-action">${event.action}</span> `;
+                            }
+                            
+                            headerHtml += `<br>Time: ${event.eventTime || 'N/A'} `;
+                            
+                            if (event.bizStep) {
+                                const bizStepShort = event.bizStep.split(':').pop();
+                                headerHtml += `<br>BizStep: ${bizStepShort} `;
+                            }
+                            
+                            eventHeader.innerHTML = headerHtml;
+                            
+                            // Add click handler to toggle event details
+                            eventHeader.addEventListener('click', () => {
+                                const body = eventHeader.nextElementSibling;
+                                body.classList.toggle('show-event');
+                            });
+                            
+                            // Event body with details
+                            const eventBody = document.createElement('div');
+                            eventBody.className = 'event-body';
+                            
+                            // Create table for event properties
+                            const table = document.createElement('table');
+                            table.className = 'property-table';
+                            
+                            // Add core event properties first
+                            const coreProps = ['eventTime', 'eventTimeZoneOffset', 'action', 'bizStep', 'disposition'];
+                            coreProps.forEach(prop => {
+                                if (event[prop]) {
+                                    const row = table.insertRow();
+                                    const cell1 = row.insertCell(0);
+                                    const cell2 = row.insertCell(1);
+                                    
+                                    cell1.textContent = prop;
+                                    cell2.textContent = event[prop];
+                                }
+                            });
+                            
+                            // Then add any EPCs or child EPCs
+                            if (event.epcList && event.epcList.length > 0) {
+                                const row = table.insertRow();
+                                const cell1 = row.insertCell(0);
+                                const cell2 = row.insertCell(1);
+                                
+                                cell1.textContent = 'EPCs';
+                                cell2.innerHTML = event.epcList.map(epc => `<div>${epc}</div>`).join('');
+                            }
+                            
+                            if (event.childEPCs && event.childEPCs.length > 0) {
+                                const row = table.insertRow();
+                                const cell1 = row.insertCell(0);
+                                const cell2 = row.insertCell(1);
+                                
+                                cell1.textContent = 'Child EPCs';
+                                cell2.innerHTML = event.childEPCs.map(epc => `<div>${epc}</div>`).join('');
+                            }
+                            
+                            // Add other properties as a collapsible section
+                            const otherProps = Object.keys(event).filter(
+                                key => !coreProps.includes(key) && key !== 'epcList' && key !== 'childEPCs' && key !== 'type'
+                            );
+                            
+                            if (otherProps.length > 0) {
+                                const row = table.insertRow();
+                                const cell1 = row.insertCell(0);
+                                const cell2 = row.insertCell(1);
+                                
+                                cell1.textContent = 'Other Properties';
+                                
+                                let otherPropsHtml = '<details><summary>Click to view</summary>';
+                                otherPropsHtml += '<table class="property-table">';
+                                
+                                otherProps.forEach(prop => {
+                                    const value = event[prop];
+                                    otherPropsHtml += '<tr>';
+                                    otherPropsHtml += `<td>${prop}</td>`;
+                                    
+                                    if (typeof value === 'object' && value !== null) {
+                                        otherPropsHtml += `<td><pre>${JSON.stringify(value, null, 2)}</pre></td>`;
+                                    } else {
+                                        otherPropsHtml += `<td>${value}</td>`;
+                                    }
+                                    
+                                    otherPropsHtml += '</tr>';
+                                });
+                                
+                                otherPropsHtml += '</table>';
+                                otherPropsHtml += '</details>';
+                                
+                                cell2.innerHTML = otherPropsHtml;
+                            }
+                            
+                            eventBody.appendChild(table);
+                            eventCard.appendChild(eventHeader);
+                            eventCard.appendChild(eventBody);
+                            eventsFormatted.appendChild(eventCard);
+                        });
+                    }
+                }
+                
+                // Column 2: JSON data
+                document.getElementById('events-json').textContent = 
+                    JSON.stringify(data.parsed.events || [], null, 2);
+                
+                // Column 3: Raw XML/JSON snippet
+                let rawEventsSection = 'Events section not found';
+                if (data.raw.includes('<EventList>')) {
+                    rawEventsSection = extractXmlSection(data.raw, 'EventList');
+                } else if (data.raw.includes('"events":')) {
+                    // For JSON, extract the events array
+                    try {
+                        const jsonObj = JSON.parse(data.raw);
+                        if (jsonObj.events) {
+                            rawEventsSection = JSON.stringify({ events: jsonObj.events }, null, 2);
+                        }
+                    } catch (e) {
+                        console.error('Error parsing events JSON:', e);
+                    }
+                }
+                document.getElementById('events-raw').textContent = rawEventsSection;
+            }
+            
+            function populateMasterDataSection(data) {
+                // Column 1: Formatted master data
+                const masterDataFormatted = document.getElementById('master-data-formatted');
+                masterDataFormatted.innerHTML = '';
+                
+                if (!data.parsed.masterData || Object.keys(data.parsed.masterData).length === 0) {
+                    masterDataFormatted.innerHTML = '<p>No master data available</p>';
+                } else {
+                    // Add master data count
+                    const countDiv = document.createElement('div');
+                    countDiv.className = 'mb-3';
+                    countDiv.innerHTML = `<strong>Total Master Data Items: ${Object.keys(data.parsed.masterData).length}</strong>`;
+                    masterDataFormatted.appendChild(countDiv);
+                    
+                    // Group master data by type
+                    const mdByType = {};
+                    for (const [id, item] of Object.entries(data.parsed.masterData)) {
+                        const type = item.type || 'Unknown Type';
+                        if (!mdByType[type]) {
+                            mdByType[type] = [];
+                        }
+                        mdByType[type].push({ id, ...item });
+                    }
+                    
+                    // Create master data cards grouped by type
+                    for (const [type, items] of Object.entries(mdByType)) {
+                        // Type header
+                        const typeHeader = document.createElement('div');
+                        typeHeader.className = 'section-title';
+                        typeHeader.innerHTML = `${type} (${items.length})`;
+                        masterDataFormatted.appendChild(typeHeader);
+                        
+                        // Master data items of this type
+                        items.forEach(item => {
+                            const mdCard = document.createElement('div');
+                            mdCard.className = 'event-card';
+                            
+                            // Master data header
+                            const mdHeader = document.createElement('div');
+                            mdHeader.className = 'event-header';
+                            mdHeader.innerHTML = `
+                                <strong>${item.name || 'Unnamed Item'}</strong><br>
+                                ID: ${item.id}
+                            `;
+                            
+                            // Add click handler to toggle details
+                            mdHeader.addEventListener('click', () => {
+                                const body = mdHeader.nextElementSibling;
+                                body.classList.toggle('show-event');
+                            });
+                            
+                            // Master data body
+                            const mdBody = document.createElement('div');
+                            mdBody.className = 'event-body';
+                            
+                            // Create table for attributes
+                            if (item.attributes && Object.keys(item.attributes).length > 0) {
+                                const attrTable = document.createElement('table');
+                                attrTable.className = 'property-table';
+                                
+                                const headerRow = attrTable.insertRow();
+                                const headerCell1 = headerRow.insertCell(0);
+                                const headerCell2 = headerRow.insertCell(1);
+                                
+                                headerCell1.innerHTML = '<strong>Attribute</strong>';
+                                headerCell2.innerHTML = '<strong>Value</strong>';
+                                
+                                for (const [key, value] of Object.entries(item.attributes)) {
+                                    const row = attrTable.insertRow();
+                                    const cell1 = row.insertCell(0);
+                                    const cell2 = row.insertCell(1);
+                                    
+                                    cell1.textContent = key;
+                                    
+                                    if (typeof value === 'object' && value !== null) {
+                                        cell2.innerHTML = `<pre>${JSON.stringify(value, null, 2)}</pre>`;
+                                    } else {
+                                        cell2.textContent = value;
+                                    }
+                                }
+                                
+                                mdBody.appendChild(attrTable);
+                            } else {
+                                mdBody.innerHTML = '<p>No attributes available</p>';
+                            }
+                            
+                            mdCard.appendChild(mdHeader);
+                            mdCard.appendChild(mdBody);
+                            masterDataFormatted.appendChild(mdCard);
+                        });
+                    }
+                }
+                
+                // Column 2: JSON data
+                document.getElementById('master-data-json').textContent = 
+                    JSON.stringify(data.parsed.masterData || {}, null, 2);
+                
+                // Column 3: Raw XML/JSON snippet
+                let rawMasterDataSection = 'Master data section not found';
+                if (data.raw.includes('<EPCISMasterData>')) {
+                    rawMasterDataSection = extractXmlSection(data.raw, 'EPCISMasterData');
+                } else if (data.raw.includes('"masterData":')) {
+                    // For JSON, extract the master data object
+                    try {
+                        const jsonObj = JSON.parse(data.raw);
+                        if (jsonObj.masterData) {
+                            rawMasterDataSection = JSON.stringify({ masterData: jsonObj.masterData }, null, 2);
+                        }
+                    } catch (e) {
+                        console.error('Error parsing master data JSON:', e);
+                    }
+                }
+                document.getElementById('master-data-raw').textContent = rawMasterDataSection;
+            }
+            
+            function populateCompleteDocumentSection(data) {
+                // Column 1: Complete parsed JSON
+                document.getElementById('complete-json').textContent = 
+                    JSON.stringify(data.parsed, null, 2);
+                
+                // Column 2: Complete raw data
+                document.getElementById('complete-raw').textContent = data.raw;
+            }
         });
     </script>
 </body>
