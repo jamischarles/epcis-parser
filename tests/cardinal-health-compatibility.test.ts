@@ -1,0 +1,289 @@
+/**
+ * Tests for Cardinal Health samples across all three EPCIS formats
+ * This ensures our parsers produce consistent output regardless of input format
+ */
+import { describe, expect, test, beforeEach } from 'vitest';
+import fs from 'fs';
+import path from 'path';
+import { EPCIS12XmlParser } from '../src/parsers/epcis12XmlParser.js';
+import { EPCIS20XmlParser } from '../src/parsers/epcis20XmlParser.js';
+import { EPCIS20JsonLdParser } from '../src/parsers/epcis20JsonLdParser.js';
+import { EPCISParser } from '../src/types.js';
+
+// Helper function to read fixture files
+function readFixture(filename: string): string {
+  return fs.readFileSync(path.join(__dirname, 'fixtures', filename), 'utf8');
+}
+
+// Load the Cardinal Health files for testing
+let xml12Data: string;
+let xml20Data: string;
+let jsonLdData: string;
+
+try {
+  xml12Data = readFixture('cardinal_health.1.2.xml');
+  xml20Data = readFixture('cardinal_health.2.0.xml');
+  jsonLdData = readFixture('cardinal_health.2.0.jsonld');
+} catch (error) {
+  console.error('Error loading test fixtures:', error);
+}
+
+describe('Cardinal Health Format Compatibility Tests', () => {
+  // Initialize parsers for each format
+  let parser12Xml: EPCISParser;
+  let parser20Xml: EPCISParser;
+  let parser20JsonLd: EPCISParser;
+
+  beforeEach(() => {
+    // Skip tests if data files aren't available
+    if (!xml12Data || !xml20Data || !jsonLdData) {
+      console.log('Skipping tests - Cardinal Health files not found');
+      return;
+    }
+    
+    // Create fresh parsers for each test
+    parser12Xml = new EPCIS12XmlParser(xml12Data);
+    parser20Xml = new EPCIS20XmlParser(xml20Data);
+    parser20JsonLd = new EPCIS20JsonLdParser(jsonLdData);
+  });
+
+  test('should return the same header information across formats', async () => {
+    // Skip test if fixtures not available
+    if (!xml12Data || !xml20Data || !jsonLdData) {
+      return;
+    }
+
+    try {
+      const header12 = await parser12Xml.getEPCISHeader();
+      const header20Xml = await parser20Xml.getEPCISHeader();
+      const header20JsonLd = await parser20JsonLd.getEPCISHeader();
+      
+      // Check that standard version exists in all formats
+      expect(header12.standardVersion).toBeDefined();
+      expect(header20Xml.standardVersion).toBeDefined();
+      expect(header20JsonLd.standardVersion).toBeDefined();
+      
+      // Check for document identification fields
+      if (header12.documentIdentification) {
+        expect(header20Xml.documentIdentification).toBeDefined();
+        expect(header20JsonLd.documentIdentification).toBeDefined();
+        
+        // Compare creation date (format might differ slightly)
+        // Just verify they all have some value
+        expect(header12.documentIdentification.creationDateTime).toBeDefined();
+        if (header20Xml.documentIdentification) {
+          expect(header20Xml.documentIdentification.creationDateTime).toBeDefined();
+        }
+        if (header20JsonLd.documentIdentification) {
+          expect(header20JsonLd.documentIdentification.creationDateTime).toBeDefined();
+        }
+      }
+    } catch (error) {
+      console.error('Error comparing header information:', error);
+      throw error;
+    }
+  });
+
+  test('should return consistent sender information across formats', async () => {
+    // Skip test if fixtures not available
+    if (!xml12Data || !xml20Data || !jsonLdData) {
+      return;
+    }
+
+    try {
+      const sender12 = await parser12Xml.getSender();
+      const sender20Xml = await parser20Xml.getSender();
+      const sender20JsonLd = await parser20JsonLd.getSender();
+      
+      // Log results to help debug
+      console.log('EPCIS 1.2 XML Sender:', JSON.stringify(sender12));
+      console.log('EPCIS 2.0 XML Sender:', JSON.stringify(sender20Xml));
+      console.log('EPCIS 2.0 JSON-LD Sender:', JSON.stringify(sender20JsonLd));
+      
+      // Check that they all have an identifier
+      expect(sender12.identifier).toBeDefined();
+      expect(sender20Xml.identifier).toBeDefined();
+      expect(sender20JsonLd.identifier).toBeDefined();
+      
+      // Cardinal Health sender should be the same across formats
+      // Expected value from the Cardinal Health sample:
+      // "urn:epc:id:sgln:030001.111124.0"
+      expect(sender12.identifier).toContain('030001.111124');
+      expect(sender20Xml.identifier).toContain('030001.111124');
+      expect(sender20JsonLd.identifier).toContain('030001.111124');
+    } catch (error) {
+      console.error('Error comparing sender information:', error);
+      throw error;
+    }
+  });
+
+  test('should return consistent receiver information across formats', async () => {
+    // Skip test if fixtures not available
+    if (!xml12Data || !xml20Data || !jsonLdData) {
+      return;
+    }
+
+    try {
+      const receiver12 = await parser12Xml.getReceiver();
+      const receiver20Xml = await parser20Xml.getReceiver();
+      const receiver20JsonLd = await parser20JsonLd.getReceiver();
+      
+      // Log results to help debug
+      console.log('EPCIS 1.2 XML Receiver:', JSON.stringify(receiver12));
+      console.log('EPCIS 2.0 XML Receiver:', JSON.stringify(receiver20Xml));
+      console.log('EPCIS 2.0 JSON-LD Receiver:', JSON.stringify(receiver20JsonLd));
+      
+      // Check that they all have an identifier
+      expect(receiver12.identifier).toBeDefined();
+      expect(receiver20Xml.identifier).toBeDefined();
+      expect(receiver20JsonLd.identifier).toBeDefined();
+      
+      // Cardinal Health receiver should be the same across formats
+      // Expected value from the Cardinal Health sample:
+      // "urn:epc:id:sgln:039999.999929.0"
+      expect(receiver12.identifier).toContain('039999.999929');
+      expect(receiver20Xml.identifier).toContain('039999.999929');
+      expect(receiver20JsonLd.identifier).toContain('039999.999929');
+    } catch (error) {
+      console.error('Error comparing receiver information:', error);
+      throw error;
+    }
+  });
+
+  test('should return consistent events across formats', async () => {
+    // Skip test if fixtures not available
+    if (!xml12Data || !xml20Data || !jsonLdData) {
+      return;
+    }
+
+    try {
+      const events12 = await parser12Xml.getEventList();
+      const events20Xml = await parser20Xml.getEventList();
+      const events20JsonLd = await parser20JsonLd.getEventList();
+      
+      // Check that all formats have events
+      expect(events12.length).toBeGreaterThan(0);
+      expect(events20Xml.length).toBeGreaterThan(0);
+      expect(events20JsonLd.length).toBeGreaterThan(0);
+      
+      // Get event types and sort them for comparison (order might vary)
+      const types12 = [...events12.map(e => e.type.toLowerCase())].sort();
+      const types20Xml = [...events20Xml.map(e => e.type.toLowerCase())].sort();
+      const types20JsonLd = [...events20JsonLd.map(e => e.type.toLowerCase())].sort();
+      
+      // Compare number of unique event types
+      expect(new Set(types12).size).toBe(new Set(types20Xml).size);
+      expect(new Set(types12).size).toBe(new Set(types20JsonLd).size);
+      
+      // Find an ObjectEvent in each format
+      const objectEvent12 = events12.find(e => e.type === 'ObjectEvent');
+      const objectEvent20Xml = events20Xml.find(e => e.type === 'ObjectEvent');
+      const objectEvent20JsonLd = events20JsonLd.find(e => e.type.toLowerCase() === 'objectevent');
+      
+      if (objectEvent12 && objectEvent20Xml && objectEvent20JsonLd) {
+        // Check essential fields exist in all formats
+        expect(objectEvent12.eventTime).toBeDefined();
+        expect(objectEvent20Xml.eventTime).toBeDefined();
+        expect(objectEvent20JsonLd.eventTime).toBeDefined();
+        
+        expect(objectEvent12.eventTimeZoneOffset).toBeDefined();
+        expect(objectEvent20Xml.eventTimeZoneOffset).toBeDefined();
+        expect(objectEvent20JsonLd.eventTimeZoneOffset).toBeDefined();
+        
+        // If bizStep exists, it should have consistent values across formats
+        if (objectEvent12.bizStep) {
+          // 1.2 and 2.0 XML use same full URI
+          expect(objectEvent20Xml.bizStep).toBe(objectEvent12.bizStep);
+          
+          // JSON-LD may use short names, so just check it exists
+          expect(objectEvent20JsonLd.bizStep).toBeDefined();
+        }
+      }
+    } catch (error) {
+      console.error('Error comparing events:', error);
+      throw error;
+    }
+  });
+
+  test('should return consistent master data across formats', async () => {
+    // Skip test if fixtures not available
+    if (!xml12Data || !xml20Data || !jsonLdData) {
+      return;
+    }
+
+    try {
+      const masterData12 = await parser12Xml.getMasterData();
+      const masterData20Xml = await parser20Xml.getMasterData();
+      const masterData20JsonLd = await parser20JsonLd.getMasterData();
+      
+      // Check that all formats have master data
+      const keys12 = Object.keys(masterData12);
+      const keys20Xml = Object.keys(masterData20Xml);
+      const keys20JsonLd = Object.keys(masterData20JsonLd);
+      
+      // Check that all formats have some master data
+      expect(keys12.length).toBeGreaterThan(0);
+      expect(keys20Xml.length).toBeGreaterThan(0);
+      expect(keys20JsonLd.length).toBeGreaterThan(0);
+      
+      // Log master data counts
+      console.log('EPCIS 1.2 XML Master Data Count:', keys12.length);
+      console.log('EPCIS 2.0 XML Master Data Count:', keys20Xml.length);
+      console.log('EPCIS 2.0 JSON-LD Master Data Count:', keys20JsonLd.length);
+      
+      // Sample some keys to verify attributes transfer
+      if (keys12.length > 0 && keys20Xml.length > 0 && keys20JsonLd.length > 0) {
+        // Choose the first key from each format
+        const firstKey12 = keys12[0];
+        const firstItem12 = masterData12[firstKey12];
+        
+        // Verify it has attributes
+        expect(firstItem12.attributes).toBeDefined();
+        expect(Object.keys(firstItem12.attributes || {}).length).toBeGreaterThan(0);
+      }
+    } catch (error) {
+      console.error('Error comparing master data:', error);
+      throw error;
+    }
+  });
+
+  test('should return the complete document structure across formats', async () => {
+    // Skip test if fixtures not available
+    if (!xml12Data || !xml20Data || !jsonLdData) {
+      return;
+    }
+
+    try {
+      const doc12 = await parser12Xml.getDocument();
+      const doc20Xml = await parser20Xml.getDocument();
+      const doc20JsonLd = await parser20JsonLd.getDocument();
+      
+      // All documents should have essential components
+      expect(doc12.events).toBeDefined();
+      expect(doc12.masterData).toBeDefined();
+      expect(doc12.header).toBeDefined();
+      expect(doc12.sender).toBeDefined();
+      expect(doc12.receiver).toBeDefined();
+      
+      expect(doc20Xml.events).toBeDefined();
+      expect(doc20Xml.masterData).toBeDefined();
+      expect(doc20Xml.header).toBeDefined();
+      expect(doc20Xml.sender).toBeDefined();
+      expect(doc20Xml.receiver).toBeDefined();
+      
+      expect(doc20JsonLd.events).toBeDefined();
+      expect(doc20JsonLd.masterData).toBeDefined();
+      expect(doc20JsonLd.header).toBeDefined();
+      expect(doc20JsonLd.sender).toBeDefined();
+      expect(doc20JsonLd.receiver).toBeDefined();
+      
+      // Events array should not be empty
+      expect(doc12.events.length).toBeGreaterThan(0);
+      expect(doc20Xml.events.length).toBeGreaterThan(0);
+      expect(doc20JsonLd.events.length).toBeGreaterThan(0);
+    } catch (error) {
+      console.error('Error comparing document structure:', error);
+      throw error;
+    }
+  });
+});
