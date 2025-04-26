@@ -121,6 +121,27 @@
             font-family: monospace;
             font-size: 0.8rem;
         }
+        .attribute-name {
+            position: relative;
+            border-bottom: 1px dotted #777;
+            cursor: help;
+        }
+        .attribute-name:hover::after {
+            content: attr(data-full-id);
+            position: absolute;
+            left: 0;
+            top: 100%;
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 10;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 <body>
@@ -745,10 +766,30 @@
                                     const cell1 = row.insertCell(0);
                                     const cell2 = row.insertCell(1);
                                     
-                                    cell1.textContent = key;
+                                    // Add the attribute name with tooltip (full URI)
+                                    // Extract the short name from the key (often in format 'urn:something#actualName')
+                                    let displayName = key;
+                                    let fullId = key;
                                     
+                                    // Check if key contains a '#' character, indicating it might be a URI
+                                    if (key.includes('#')) {
+                                        displayName = key.split('#').pop(); // Get part after the # symbol
+                                    } else if (key.includes(':')) {
+                                        // Or try to get the last part after the last colon
+                                        displayName = key.split(':').pop();
+                                    }
+                                    
+                                    // Create span with hover tooltip
+                                    cell1.innerHTML = `<span class="attribute-name" data-full-id="${fullId}">${displayName}</span>`;
+                                    
+                                    // Handle different value formats
                                     if (typeof value === 'object' && value !== null) {
-                                        cell2.innerHTML = `<pre>${JSON.stringify(value, null, 2)}</pre>`;
+                                        // Check if it has a "value" property (previously "_" property)
+                                        if (value.value !== undefined) {
+                                            cell2.textContent = value.value;
+                                        } else {
+                                            cell2.innerHTML = `<pre>${JSON.stringify(value, null, 2)}</pre>`;
+                                        }
                                     } else {
                                         cell2.textContent = value;
                                     }

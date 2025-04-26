@@ -178,10 +178,29 @@ async function parseEPCIS(xmlData) {
               // Use the id as the key
               const id = element.id;
               if (id) {
+                // Process attributes and transform any '_' keys to 'value'
+                let processedAttributes = {};
+                if (element.attribute) {
+                  // Copy attributes and transform the data structure
+                  for (const [key, val] of Object.entries(element.attribute)) {
+                    if (typeof val === 'object' && val !== null && '_' in val) {
+                      // Transform objects with '_' property to use 'value' instead
+                      processedAttributes[key] = {
+                        ...val,
+                        value: val._
+                      };
+                      delete processedAttributes[key]._;
+                    } else {
+                      // Keep other attributes as is
+                      processedAttributes[key] = val;
+                    }
+                  }
+                }
+                
                 masterData[id] = {
                   id,
                   type: vocabulary.type,
-                  attributes: element.attribute ? element.attribute : {},
+                  attributes: processedAttributes,
                   children: []
                 };
                 
