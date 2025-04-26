@@ -181,20 +181,32 @@ async function parseEPCIS(xmlData) {
                 // Process attributes and transform any '_' keys to 'value'
                 let processedAttributes = {};
                 if (element.attribute) {
-                  // Copy attributes and transform the data structure
-                  for (const [key, val] of Object.entries(element.attribute)) {
-                    if (typeof val === 'object' && val !== null && '_' in val) {
-                      // Transform objects with '_' property to use 'value' instead
-                      processedAttributes[key] = {
-                        ...val,
-                        value: val._
+                  // Handle both array and object formats for attributes
+                  const attributes = Array.isArray(element.attribute) ? element.attribute : [element.attribute];
+                  
+                  // Process each attribute
+                  attributes.forEach(attr => {
+                    // Use the attribute id as the key if available
+                    const attrId = attr.id || 'unnamed';
+                    
+                    // Check if attribute has a text value or is a complex object
+                    if (typeof attr === 'string') {
+                      // Simple string value
+                      processedAttributes[attrId] = attr;
+                    } else if (attr._ !== undefined) {
+                      // Object with an underscore property for the value
+                      processedAttributes[attrId] = {
+                        value: attr._,
+                        // Preserve other properties
+                        ...Object.fromEntries(
+                          Object.entries(attr).filter(([k]) => k !== '_')
+                        )
                       };
-                      delete processedAttributes[key]._;
                     } else {
-                      // Keep other attributes as is
-                      processedAttributes[key] = val;
+                      // Other object format, keep as is
+                      processedAttributes[attrId] = attr;
                     }
-                  }
+                  });
                 }
                 
                 masterData[id] = {
@@ -204,9 +216,13 @@ async function parseEPCIS(xmlData) {
                   children: []
                 };
                 
-                // Add name if available
-                if (element.attribute && element.attribute.name) {
-                  masterData[id].name = element.attribute.name;
+                // Add name if available in attributes
+                if (processedAttributes['urn:epcglobal:cbv:mda#name']) {
+                  const nameAttr = processedAttributes['urn:epcglobal:cbv:mda#name'];
+                  masterData[id].name = typeof nameAttr === 'object' ? nameAttr.value : nameAttr;
+                } else if (processedAttributes['name']) {
+                  const nameAttr = processedAttributes['name'];
+                  masterData[id].name = typeof nameAttr === 'object' ? nameAttr.value : nameAttr;
                 }
               }
             });
