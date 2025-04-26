@@ -77,8 +77,8 @@ async function parseEPCIS(xmlData) {
   const parser = new xml2js.Parser({
     explicitArray: false,
     mergeAttrs: true,
-    attrNameProcessors: [(name) => name.replace(/^epcis:/, '').replace(/^standard:/, '')],
-    tagNameProcessors: [(name) => name.replace(/^epcis:/, '').replace(/^standard:/, '')]
+    attrNameProcessors: [(name) => name.replace(/^epcis:/, '').replace(/^standard:/, '').replace(/^sbdh:/, '')],
+    tagNameProcessors: [(name) => name.replace(/^epcis:/, '').replace(/^standard:/, '').replace(/^sbdh:/, '')]
   });
   
   // Parse the XML to JS object
@@ -101,12 +101,60 @@ async function parseEPCIS(xmlData) {
       
       // Extract sender information (StandardBusinessDocument/Header/Sender)
       if (header.StandardBusinessDocumentHeader && header.StandardBusinessDocumentHeader.Sender) {
-        sender = header.StandardBusinessDocumentHeader.Sender;
+        const senderData = header.StandardBusinessDocumentHeader.Sender;
+        
+        // Extract Identifier which may be a string or an object with '_' property
+        if (senderData.Identifier) {
+          if (typeof senderData.Identifier === 'string') {
+            sender.identifier = senderData.Identifier;
+          } else if (senderData.Identifier._ && typeof senderData.Identifier._ === 'string') {
+            sender.identifier = senderData.Identifier._;
+            if (senderData.Identifier.Authority) {
+              sender.authority = senderData.Identifier.Authority;
+            }
+          } else if (typeof senderData.Identifier === 'object') {
+            sender.identifier = JSON.stringify(senderData.Identifier);
+          }
+        }
+        
+        // Extract Contact information if available
+        if (senderData.ContactInformation && senderData.ContactInformation.Contact) {
+          if (typeof senderData.ContactInformation.Contact === 'string') {
+            sender.name = senderData.ContactInformation.Contact;
+          } else if (senderData.ContactInformation.Contact._ && 
+                    typeof senderData.ContactInformation.Contact._ === 'string') {
+            sender.name = senderData.ContactInformation.Contact._;
+          }
+        }
       }
       
       // Extract receiver information (StandardBusinessDocument/Header/Receiver)
       if (header.StandardBusinessDocumentHeader && header.StandardBusinessDocumentHeader.Receiver) {
-        receiver = header.StandardBusinessDocumentHeader.Receiver;
+        const receiverData = header.StandardBusinessDocumentHeader.Receiver;
+        
+        // Extract Identifier which may be a string or an object with '_' property
+        if (receiverData.Identifier) {
+          if (typeof receiverData.Identifier === 'string') {
+            receiver.identifier = receiverData.Identifier;
+          } else if (receiverData.Identifier._ && typeof receiverData.Identifier._ === 'string') {
+            receiver.identifier = receiverData.Identifier._;
+            if (receiverData.Identifier.Authority) {
+              receiver.authority = receiverData.Identifier.Authority;
+            }
+          } else if (typeof receiverData.Identifier === 'object') {
+            receiver.identifier = JSON.stringify(receiverData.Identifier);
+          }
+        }
+        
+        // Extract Contact information if available
+        if (receiverData.ContactInformation && receiverData.ContactInformation.Contact) {
+          if (typeof receiverData.ContactInformation.Contact === 'string') {
+            receiver.name = receiverData.ContactInformation.Contact;
+          } else if (receiverData.ContactInformation.Contact._ && 
+                    typeof receiverData.ContactInformation.Contact._ === 'string') {
+            receiver.name = receiverData.ContactInformation.Contact._;
+          }
+        }
       }
     }
     

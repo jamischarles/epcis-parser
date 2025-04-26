@@ -262,16 +262,134 @@ export class EPCIS20JsonLdParser implements EPCISParser {
 
     try {
       const jsonData = JSON.parse(this.data);
+      const sender: Sender = {};
+      const receiver: Receiver = {};
       
-      // Extract sender
+      // First check for sender/receiver in epcisHeader
       if (jsonData.epcisHeader?.sender) {
-        this.document.sender = jsonData.epcisHeader.sender;
+        if (typeof jsonData.epcisHeader.sender === 'object') {
+          // Copy all sender properties
+          Object.assign(sender, jsonData.epcisHeader.sender);
+        }
       }
       
-      // Extract receiver
       if (jsonData.epcisHeader?.receiver) {
-        this.document.receiver = jsonData.epcisHeader.receiver;
+        if (typeof jsonData.epcisHeader.receiver === 'object') {
+          // Copy all receiver properties
+          Object.assign(receiver, jsonData.epcisHeader.receiver);
+        }
       }
+      
+      // If SBDH is available in JSON-LD, extract from there
+      if (jsonData.epcisHeader?.standardBusinessDocumentHeader) {
+        const sbdh = jsonData.epcisHeader.standardBusinessDocumentHeader;
+        
+        // Extract sender from SBDH
+        if (sbdh.sender && !sender.identifier) {
+          if (sbdh.sender.identifier) {
+            sender.identifier = typeof sbdh.sender.identifier === 'string' ? 
+              sbdh.sender.identifier : sbdh.sender.identifier.value || sbdh.sender.identifier['@value'];
+            
+            if (sbdh.sender.identifier.authority) {
+              sender.authority = sbdh.sender.identifier.authority;
+            }
+          }
+          
+          if (sbdh.sender.contactInformation?.contact) {
+            sender.name = typeof sbdh.sender.contactInformation.contact === 'string' ?
+              sbdh.sender.contactInformation.contact : 
+              sbdh.sender.contactInformation.contact.value || sbdh.sender.contactInformation.contact['@value'];
+          }
+        }
+        
+        // Extract receiver from SBDH
+        if (sbdh.receiver && !receiver.identifier) {
+          if (sbdh.receiver.identifier) {
+            receiver.identifier = typeof sbdh.receiver.identifier === 'string' ? 
+              sbdh.receiver.identifier : sbdh.receiver.identifier.value || sbdh.receiver.identifier['@value'];
+            
+            if (sbdh.receiver.identifier.authority) {
+              receiver.authority = sbdh.receiver.identifier.authority;
+            }
+          }
+          
+          if (sbdh.receiver.contactInformation?.contact) {
+            receiver.name = typeof sbdh.receiver.contactInformation.contact === 'string' ?
+              sbdh.receiver.contactInformation.contact : 
+              sbdh.receiver.contactInformation.contact.value || sbdh.receiver.contactInformation.contact['@value'];
+          }
+        }
+      }
+      
+      // If still no sender/receiver info, check for PGLN identifiers in master data
+      if ((!sender.identifier || !sender.name) && this.document.masterData) {
+        for (const [id, data] of Object.entries(this.document.masterData)) {
+          if (id.includes(':pgln:')) {
+            // For senders, some implementations use source parties
+            if (!sender.identifier && !sender.name) {
+              // Look for indicators this is a source in the attributes
+              const isSender = data.attributes?.['urn:epcglobal:cbv:owning_party'] === 'true' ||
+                              data.attributes?.role?.toLowerCase()?.includes('sender') ||
+                              data.attributes?.role?.toLowerCase()?.includes('source');
+              if (isSender) {
+                sender.identifier = id;
+                sender.name = data.name || data.attributes?.name;
+              }
+            }
+            
+            // For receivers, some implementations use destination parties
+            if (!receiver.identifier && !receiver.name) {
+              // Look for indicators this is a destination in the attributes
+              const isReceiver = data.attributes?.['urn:epcglobal:cbv:owning_party'] === 'false' ||
+                               data.attributes?.role?.toLowerCase()?.includes('receiver') ||
+                               data.attributes?.role?.toLowerCase()?.includes('destination');
+              if (isReceiver) {
+                receiver.identifier = id;
+                receiver.name = data.name || data.attributes?.name;
+              }
+            }
+          }
+        }
+      }
+      
+      // Last resort - check events for source/destination info
+      if ((!sender.identifier || !sender.name) && this.document.events.length > 0) {
+        // Look for source info in events
+        const eventWithSource = this.document.events.find(e => e.sourceList && e.sourceList.length > 0);
+        if (eventWithSource?.sourceList) {
+          // Look for owning_party source
+          const owningPartySource = eventWithSource.sourceList.find(
+            (src: any) => src.type === 'urn:epcglobal:cbv:sdt:owning_party');
+          
+          if (owningPartySource) {
+            sender.identifier = owningPartySource.source;
+            if (this.document.masterData && this.document.masterData[owningPartySource.source]) {
+              sender.name = this.document.masterData[owningPartySource.source].name;
+            }
+          }
+        }
+      }
+      
+      if ((!receiver.identifier || !receiver.name) && this.document.events.length > 0) {
+        // Look for destination info in events
+        const eventWithDest = this.document.events.find(e => e.destinationList && e.destinationList.length > 0);
+        if (eventWithDest?.destinationList) {
+          // Look for owning_party destination
+          const owningPartyDest = eventWithDest.destinationList.find(
+            (dest: any) => dest.type === 'urn:epcglobal:cbv:sdt:owning_party');
+          
+          if (owningPartyDest) {
+            receiver.identifier = owningPartyDest.destination;
+            if (this.document.masterData && this.document.masterData[owningPartyDest.destination]) {
+              receiver.name = this.document.masterData[owningPartyDest.destination].name;
+            }
+          }
+        }
+      }
+      
+      this.document.sender = sender;
+      this.document.receiver = receiver;
+      
     } catch (error) {
       console.error('Error extracting sender/receiver:', error);
     }
