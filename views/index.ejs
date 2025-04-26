@@ -147,12 +147,28 @@
             font-weight: normal;
             padding: 0.25rem 0.5rem;
         }
+        /* Styles for highlighting events and master data during linking */
+        .highlight-event {
+            background-color: rgba(255, 230, 153, 0.5);
+            border: 2px solid #FFB74D !important;
+            box-shadow: 0 0 10px rgba(255, 183, 77, 0.5);
+            transition: all 0.5s ease;
+        }
+        .highlight-master-data {
+            background-color: rgba(200, 230, 255, 0.5);
+            border: 2px solid #4FC3F7 !important;
+            box-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+            transition: all 0.5s ease;
+        }
+        .master-data-link {
+            color: #0366d6;
+            text-decoration: none;
+        }
+        .master-data-link:hover {
+            text-decoration: underline;
+        }
         .list-group-item {
             font-family: monospace;
-        }
-        .highlight-event {
-            background-color: rgba(255, 243, 205, 0.5);
-            transition: background-color 0.5s ease;
         }
         
         .header-link {
@@ -354,7 +370,7 @@
                     Master Data
                     <a href="https://epcisworkbench.gs1.org/ui/faq#displayNames" class="header-link" target="_blank">(Additional Info)</a>
                 </div>
-                <div class="section-body">
+                <div id="master-data-section" class="section-body">
                     <div class="column-view">
                         <!-- Column 1: Formatted Data -->
                         <div class="column">
@@ -748,6 +764,82 @@
                             }
                             
                             eventBody.appendChild(table);
+                            
+                            // Add Related Master Data section if available
+                            if (event.relatedMasterData && event.relatedMasterData.length > 0) {
+                                const relatedMDHeader = document.createElement('h6');
+                                relatedMDHeader.className = 'mt-4 mb-2 d-flex align-items-center';
+                                relatedMDHeader.innerHTML = `Related Master Data 
+                                    <span class="badge bg-success ms-2">${event.relatedMasterData.length}</span>`;
+                                eventBody.appendChild(relatedMDHeader);
+                                
+                                // Create table for related master data items
+                                const mdTable = document.createElement('table');
+                                mdTable.className = 'property-table';
+                                
+                                // Create the header row
+                                const headerRow = mdTable.insertRow();
+                                const headerCell1 = headerRow.insertCell(0);
+                                const headerCell2 = headerRow.insertCell(1);
+                                
+                                headerCell1.innerHTML = '<strong>Name</strong>';
+                                headerCell2.innerHTML = '<strong>Type</strong>';
+                                
+                                // Add each related master data item
+                                event.relatedMasterData.forEach(md => {
+                                    const row = mdTable.insertRow();
+                                    const cell1 = row.insertCell(0);
+                                    const cell2 = row.insertCell(1);
+                                    
+                                    // Format the name as a link to the master data item
+                                    const shortId = md.id.split(':').pop();
+                                    const mdName = md.name || shortId;
+                                    cell1.innerHTML = `<a href="#" class="master-data-link" data-md-id="${md.id}">${mdName}</a>`;
+                                    cell2.textContent = md.type || 'unknown';
+                                    
+                                    // Make the row clickable
+                                    row.style.cursor = 'pointer';
+                                    row.addEventListener('click', () => {
+                                        // Remove highlight from any previously highlighted master data
+                                        document.querySelectorAll('.highlight-master-data').forEach(el => {
+                                            el.classList.remove('highlight-master-data');
+                                        });
+                                        
+                                        // Go to master data section
+                                        const masterDataSection = document.getElementById('master-data-section');
+                                        if (masterDataSection) {
+                                            masterDataSection.scrollIntoView({ behavior: 'smooth' });
+                                            
+                                            // Find all master data cards
+                                            const mdCards = masterDataSection.querySelectorAll('.event-card');
+                                            
+                                            // Find the card with matching ID
+                                            for (const card of mdCards) {
+                                                if (card.textContent.includes(md.id)) {
+                                                    // Add highlight class
+                                                    card.classList.add('highlight-master-data');
+                                                    
+                                                    // Expand the card if it's collapsed
+                                                    const cardBody = card.querySelector('.event-body');
+                                                    if (cardBody && !cardBody.classList.contains('show-event')) {
+                                                        cardBody.classList.add('show-event');
+                                                    }
+                                                    
+                                                    // Scroll to this card
+                                                    setTimeout(() => {
+                                                        card.scrollIntoView({ behavior: 'smooth' });
+                                                    }, 500);
+                                                    
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    });
+                                });
+                                
+                                eventBody.appendChild(mdTable);
+                            }
+                            
                             eventCard.appendChild(eventHeader);
                             eventCard.appendChild(eventBody);
                             eventsFormatted.appendChild(eventCard);
