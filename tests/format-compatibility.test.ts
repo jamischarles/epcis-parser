@@ -3,7 +3,7 @@
  * These tests verify that our parsers produce consistent output for the same data in different formats
  */
 
-import { expect, test, describe } from 'vitest';
+import { expect, test, describe, beforeEach } from 'vitest';
 import { EPCIS12XmlParser } from '../src/parsers/epcis12XmlParser.js';
 import { EPCIS20XmlParser } from '../src/parsers/epcis20XmlParser.js';
 import { EPCIS20JsonLdParser } from '../src/parsers/epcis20JsonLdParser.js';
