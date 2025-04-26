@@ -172,6 +172,42 @@
             color: #495057;
             text-decoration: none;
         }
+        
+        .quick-links {
+            position: sticky;
+            top: 20px;
+            z-index: 1000;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .quick-links ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .quick-links li a {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            color: #495057;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+        
+        .quick-links li a:hover {
+            background-color: #dee2e6;
+            color: #212529;
+        }
     </style>
 </head>
 <body>
@@ -179,7 +215,7 @@
         <h1 class="my-4">EPCIS Parser Demo</h1>
         
         <div class="row mb-4">
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
                         <h5>Select EPCIS File</h5>
@@ -200,6 +236,18 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-4">
+                <div class="quick-links">
+                    <h6>Quick Navigation</h6>
+                    <ul>
+                        <li><a href="#document-header">Header</a></li>
+                        <li><a href="#sender-receiver">Sender/Receiver</a></li>
+                        <li><a href="#events">Events</a></li>
+                        <li><a href="#master-data">Master Data</a></li>
+                        <li><a href="#full-document">Full Document</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
 
         <div id="loading">
@@ -211,7 +259,7 @@
         
         <div id="results" style="display: none;">
             <!-- Document Header Section -->
-            <div class="section-card">
+            <div id="document-header" class="section-card">
                 <div class="section-header">
                     EPCIS Document Header
                 </div>
@@ -241,7 +289,7 @@
             </div>
             
             <!-- Sender & Receiver Section -->
-            <div class="section-card">
+            <div id="sender-receiver" class="section-card">
                 <div class="section-header">
                     Sender & Receiver Information
                 </div>
@@ -271,7 +319,7 @@
             </div>
             
             <!-- Events Section -->
-            <div class="section-card">
+            <div id="events" class="section-card">
                 <div class="section-header">
                     EPCIS Events
                 </div>
@@ -301,7 +349,7 @@
             </div>
             
             <!-- Master Data Section -->
-            <div class="section-card">
+            <div id="master-data" class="section-card">
                 <div class="section-header">
                     Master Data
                     <a href="https://epcisworkbench.gs1.org/ui/faq#displayNames" class="header-link" target="_blank">(Additional Info)</a>
@@ -332,7 +380,7 @@
             </div>
             
             <!-- Full EPCIS Document Section -->
-            <div class="section-card">
+            <div id="full-document" class="section-card">
                 <div class="section-header">
                     Complete EPCIS Document
                 </div>
