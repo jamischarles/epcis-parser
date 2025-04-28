@@ -170,13 +170,14 @@ Event type-specific fields are also available.
 ### Extracting Different Event Types
 
 ```javascript
-// Using ESM
 import { createParser } from 'epcis-parser';
+import { readFile } from 'fs/promises';
 
-// OR using CommonJS
-// const { createParser } = require('epcis-parser');
-
-async function analyzeEvents(epcisData) {
+async function analyzeEvents(filePath) {
+  // Read EPCIS document from file
+  const epcisData = await readFile(filePath, 'utf-8');
+  
+  // Create parser - format is auto-detected
   const parser = createParser(epcisData);
   const events = await parser.getEventList();
   
@@ -217,19 +218,20 @@ async function analyzeEvents(epcisData) {
 ### Working with Master Data
 
 ```javascript
-// Using ESM
 import { createParser } from 'epcis-parser';
+import { readFile } from 'fs/promises';
 
-// OR using CommonJS
-// const { createParser } = require('epcis-parser');
-
-async function analyzeMasterData(epcisData) {
+async function analyzeMasterData(filePath) {
+  // Read EPCIS document from file
+  const epcisData = await readFile(filePath, 'utf-8');
+  
+  // Create parser with auto-format detection
   const parser = createParser(epcisData);
   const masterData = await parser.getMasterData();
   
   // Get all business locations
   const businessLocations = Object.values(masterData)
-    .filter(item => item.type.includes('BusinessLocation'));
+    .filter(item => item.type?.includes('BusinessLocation'));
   
   console.log(`Found ${businessLocations.length} business locations`);
   
@@ -248,7 +250,7 @@ async function analyzeMasterData(epcisData) {
     }
   });
   
-  // Working with bidirectional links
+  // Working with bidirectional links between master data and events
   businessLocations.forEach(location => {
     if (location.relatedEvents && location.relatedEvents.length > 0) {
       console.log(`Location ${location.id} is referenced in ${location.relatedEvents.length} events`);
@@ -260,14 +262,15 @@ async function analyzeMasterData(epcisData) {
 ### Error Handling
 
 ```javascript
-// Using ESM
 import { createParser } from 'epcis-parser';
+import { readFile } from 'fs/promises';
 
-// OR using CommonJS
-// const { createParser } = require('epcis-parser');
-
-async function parseAndValidate(epcisData) {
+async function parseAndValidate(filePath) {
   try {
+    // Read EPCIS document from file
+    const epcisData = await readFile(filePath, 'utf-8');
+    
+    // Create parser with validation options
     const parser = createParser(epcisData, {
       validate: true,
       validationOptions: {
@@ -335,6 +338,57 @@ npx vitest run --coverage
 
 MIT License
 
+## Bidirectional Linking
+
+One of the library's most powerful features is bidirectional linking between master data and events. 
+This creates a navigable network of relationships throughout your EPCIS document:
+
+```javascript
+import { createParser } from 'epcis-parser';
+import { readFile } from 'fs/promises';
+
+async function analyzeBidirectionalLinks(filePath) {
+  const epcisData = await readFile(filePath, 'utf-8');
+  const parser = createParser(epcisData);
+  
+  // Get the full document with bidirectional links
+  const document = await parser.getDocument();
+  
+  // From master data, find related events
+  const masterDataWithEvents = Object.values(document.masterData)
+    .filter(item => item.relatedEvents?.length > 0);
+    
+  console.log(`Found ${masterDataWithEvents.length} master data items with linked events`);
+  
+  // From events, find related master data
+  const eventsWithMasterData = document.events
+    .filter(event => event.relatedMasterData?.length > 0);
+    
+  console.log(`Found ${eventsWithMasterData.length} events with linked master data`);
+  
+  // Example of traversing the bidirectional links
+  const locationId = Object.keys(document.masterData).find(id => 
+    id.includes(':sgln:') && document.masterData[id].type?.includes('Location')
+  );
+  
+  if (locationId) {
+    const location = document.masterData[locationId];
+    console.log(`Location: ${location.name || location.id}`);
+    
+    // Get all events referencing this location
+    if (location.relatedEvents) {
+      console.log(`Related Events: ${location.relatedEvents.length}`);
+      
+      // For each related event, get its event time
+      for (const eventIndex of location.relatedEvents) {
+        const event = document.events[eventIndex];
+        console.log(`- ${event.type} at ${event.eventTime}`);
+      }
+    }
+  }
+}
+```
+
 ## Interactive Demo Server
 
 The package includes a built-in web interface for visualizing EPCIS data:
@@ -348,11 +402,11 @@ node server.js
 
 The demo server provides:
 
-- Interactive parsing of EPCIS files
+- Interactive parsing of EPCIS files (drag and drop any EPCIS file)
 - Three-column view (formatted data, parsed JSON, raw data)
 - Collapsible UI for exploring complex documents
-- Bidirectional linking between master data and events
-- Automatic highlighting when navigating between linked elements
+- Bidirectional linking between master data and events with highlighting
+- Automatic XML section extraction for better raw data viewing
 - Quick navigation links to different document sections
 
 This interactive interface is particularly useful for:
@@ -360,6 +414,7 @@ This interactive interface is particularly useful for:
 - Exploring the structure of EPCIS documents
 - Visualizing relationships between events and master data
 - Teaching and learning about EPCIS
+- Testing compatibility across different EPCIS formats
 
 ## Contributing
 
