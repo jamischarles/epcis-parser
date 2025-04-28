@@ -1,10 +1,11 @@
 # EPCIS Parser
 
-A Node.js module for parsing and validating EPCIS 1.2/2.0 XML and JSON-LD files with a consistent API.
+A Node.js module for parsing, validating, and visualizing EPCIS 1.2/2.0 XML and JSON-LD files with a consistent API and advanced event data processing capabilities.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
-[![Test Coverage](https://img.shields.io/badge/Coverage-Comprehensive-green.svg)](https://github.com/your-username/epcis-parser/actions)
+[![ESM Ready](https://img.shields.io/badge/ESM-Ready-brightgreen.svg)](https://nodejs.org/api/esm.html)
+[![Vitest](https://img.shields.io/badge/Tested%20with-Vitest-green.svg)](https://vitest.dev/)
 
 ## Introduction
 
@@ -22,10 +23,11 @@ This library provides a unified API to parse, validate, and extract data from EP
 - **Complete Event Support**: Process all EPCIS event types (Object, Aggregation, Transaction, Transformation)
 - **Master Data Handling**: Extract and utilize vocabulary elements and attributes
 - **Schema Validation**: Validate documents against official EPCIS schemas
-- **Extension Support**: Handle vendor-specific extensions and custom data fields
-- **TypeScript Ready**: Full type definitions for enhanced developer experience
+- **Bidirectional Linking**: Link master data and events with two-way references
+- **Sender/Receiver Extraction**: Multiple fallback strategies for extracting sender and receiver info
+- **TypeScript & ESM Ready**: Full type definitions and ES modules support
 - **Real-world Tested**: Robust parsing of industry standard EPCIS implementations
-- **Zero Dependencies**: Minimal external dependencies for better security and smaller footprint
+- **Interactive Demo**: Visualize parsed data with a built-in web interface
 
 ## Installation
 
@@ -36,13 +38,12 @@ npm install epcis-parser
 ## Quick Start
 
 ```javascript
-const { createParser } = require('epcis-parser');
-// Or using ES modules
-// import { createParser } from 'epcis-parser';
+// Using ES modules (recommended)
+import { createParser } from 'epcis-parser';
+import { readFile } from 'fs/promises';
 
 // Read an EPCIS document
-const fs = require('fs');
-const epcisData = fs.readFileSync('path/to/your-epcis-document.xml', 'utf8');
+const epcisData = await readFile('path/to/your-epcis-document.xml', 'utf8');
 
 // Create a parser - format is auto-detected
 const parser = createParser(epcisData, { validate: true });
@@ -169,7 +170,11 @@ Event type-specific fields are also available.
 ### Extracting Different Event Types
 
 ```javascript
-const { createParser } = require('epcis-parser');
+// Using ESM
+import { createParser } from 'epcis-parser';
+
+// OR using CommonJS
+// const { createParser } = require('epcis-parser');
 
 async function analyzeEvents(epcisData) {
   const parser = createParser(epcisData);
@@ -212,7 +217,11 @@ async function analyzeEvents(epcisData) {
 ### Working with Master Data
 
 ```javascript
-const { createParser } = require('epcis-parser');
+// Using ESM
+import { createParser } from 'epcis-parser';
+
+// OR using CommonJS
+// const { createParser } = require('epcis-parser');
 
 async function analyzeMasterData(epcisData) {
   const parser = createParser(epcisData);
@@ -238,13 +247,24 @@ async function analyzeMasterData(epcisData) {
       console.log(`Location ${location.id} has ${location.children.length} sub-locations`);
     }
   });
+  
+  // Working with bidirectional links
+  businessLocations.forEach(location => {
+    if (location.relatedEvents && location.relatedEvents.length > 0) {
+      console.log(`Location ${location.id} is referenced in ${location.relatedEvents.length} events`);
+    }
+  });
 }
 ```
 
 ### Error Handling
 
 ```javascript
-const { createParser } = require('epcis-parser');
+// Using ESM
+import { createParser } from 'epcis-parser';
+
+// OR using CommonJS
+// const { createParser } = require('epcis-parser');
 
 async function parseAndValidate(epcisData) {
   try {
@@ -294,20 +314,52 @@ npm test
 
 ### Running Tests
 
-The library includes extensive tests for all parsers:
+The library uses Vitest for fast and efficient testing:
 
 ```bash
 # Run all tests
-npm test
+npx vitest run
+
+# Run tests in watch mode for development
+npx vitest
 
 # Run specific test suites
-npm test -- --testPathPattern=epcis12XmlParser
-npm test -- --testPathPattern=masterData
+npx vitest run epcis12XmlParser
+npx vitest run masterData
+
+# Run with coverage report
+npx vitest run --coverage
 ```
 
 ## License
 
 MIT License
+
+## Interactive Demo Server
+
+The package includes a built-in web interface for visualizing EPCIS data:
+
+```bash
+# Start the demo server
+node server.js
+
+# Then open your browser to http://localhost:5000
+```
+
+The demo server provides:
+
+- Interactive parsing of EPCIS files
+- Three-column view (formatted data, parsed JSON, raw data)
+- Collapsible UI for exploring complex documents
+- Bidirectional linking between master data and events
+- Automatic highlighting when navigating between linked elements
+- Quick navigation links to different document sections
+
+This interactive interface is particularly useful for:
+- Debugging EPCIS implementations
+- Exploring the structure of EPCIS documents
+- Visualizing relationships between events and master data
+- Teaching and learning about EPCIS
 
 ## Contributing
 
